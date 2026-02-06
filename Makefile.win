@@ -1,0 +1,55 @@
+# Windows Makefile - Use with MinGW/MSYS2 on Windows
+# Run with: mingw32-make -f Makefile.win
+
+# ---------------- Compiler ----------------
+CXX = g++
+
+# ---------------- Directories ----------------
+SRC_DIR   = .
+BUILD_DIR = builds
+OBJ_DIR   = obj/windows
+
+# ---------------- Files ----------------
+SRCS = gameObject.cpp settings.cpp main.cpp
+OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRCS))
+
+# ---------------- Flags ----------------
+CXXFLAGS = -O2 -std=c++17
+
+# Raylib paths
+INCLUDE_DIRS = -IC:/raylib/src
+
+# Steam SDK path (download from https://partner.steamgames.com/downloads/steamworks_sdk.zip)
+# Uncomment and set correct path after downloading:
+INCLUDE_DIRS += -IC:/steamworks/sdk/public
+
+# ---------------- Libraries ----------------
+LIBS = -lraylib -lsteam_api64 -lopengl32 -lgdi32 -lwinmm -luser32 -lkernel32 -lshell32 -lws2_32
+LIBDIRS = -L. -LC:/raylib/src
+
+# Runtime DLLs to copy
+RUNTIME_LIBS = steam_api64.dll
+
+# ---------------- Target ----------------
+all: game
+
+game: $(OBJS)
+	@if not exist "$(BUILD_DIR)" mkdir "$(BUILD_DIR)"
+	$(CXX) $(OBJS) $(LIBDIRS) $(LIBS) -o $(BUILD_DIR)\game.exe
+	@if exist steam_api64.dll copy /Y steam_api64.dll $(BUILD_DIR)\ >nul
+	@echo Build complete: $(BUILD_DIR)\game.exe
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@if not exist "obj\windows" mkdir "obj\windows"
+	$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
+
+# ---------------- Utilities ----------------
+clean:
+	@if exist obj rmdir /S /Q obj
+	@if exist $(BUILD_DIR) rmdir /S /Q $(BUILD_DIR)
+	@echo Clean complete
+
+run: game
+	@cd $(BUILD_DIR) && game.exe
+
+.PHONY: all clean run game
