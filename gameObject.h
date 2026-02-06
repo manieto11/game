@@ -1,0 +1,27 @@
+#ifndef GAMEOBJECT_H
+#define GAMEOBJECT_H
+
+#include "components.h"
+
+class GameObject
+{
+private:
+    bool enabled;
+
+public:
+    // Return true if GameObject is enabled
+    bool IsEnabled();
+    // Enable (or disable) GameObject
+    void SetActive(bool bActive);
+
+    // Called at the beggining of the execution
+    virtual void Initialize() = 0;
+    // Called every frame
+    virtual void Update() = 0;
+    // Called every fixed delta time step
+    virtual void FixedUpdate() = 0;
+    // Called at the end of the execution
+    virtual void Finalize() = 0;
+};
+
+#endif
