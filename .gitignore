@@ -1,4 +1,5 @@
 ## Ignore build artifacts and third-party sources
+.vscode/
 obj/
 builds/
 third_party/

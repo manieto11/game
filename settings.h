@@ -9,9 +9,13 @@
 
 #define VERSION "early_dev"
 
+#define PIXELS_PER_UNIT 32
+
 // Configurable parameters
 
 inline int screenWidth = 800, screenHeight = 600;
+
+inline float scaleMultiplier = 1.0f;
 
 inline bool steamEnabled = false, fullscreen = false;
 

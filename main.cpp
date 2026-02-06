@@ -1,3 +1,4 @@
+#include "game.h"
 #include "raylib.h"
 #include "settings.h"
 #include "steam/steam_api.h"
@@ -17,14 +18,21 @@ int main()
     if (!steamEnabled)
         TraceLog(LOG_WARNING, "Steam API not enabled!");
 
+    InitGame();
+
     while (!WindowShouldClose())
     {
         if (steamEnabled) SteamAPI_RunCallbacks();
 
         BeginDrawing();
-        ClearBackground(steamEnabled ? GREEN : RED);
+        ClearBackground(SKYBLUE);
+        BeginMode2D(*MainCamera);
+        
+        EndMode2D();
         EndDrawing();
     }
+
+    FinishGame();
 
     SaveSettings();
 }
