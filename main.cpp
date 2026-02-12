@@ -7,32 +7,46 @@ int main()
 {
     SetTraceLogLevel(LOG_WARNING);
 
-    LoadSettings();
-
     InitWindow(screenWidth, screenHeight, GAME_TITLE);
     if (fullscreen)
         SetWindowState(FLAG_FULLSCREEN_MODE);
     SetExitKey(KEY_NULL);
 
+    InitGame();
+
     steamEnabled = SteamAPI_Init();
     if (!steamEnabled)
         TraceLog(LOG_WARNING, "Steam API not enabled!");
 
-    InitGame();
+    float fixedUpdate = 0.0f;
 
     while (!WindowShouldClose())
     {
         if (steamEnabled) SteamAPI_RunCallbacks();
 
+        fixedUpdate += GetFrameTime();
+
+        while (fixedUpdate >= FIXED_DELTA_TIME) 
+        {
+            FixedUpdateGame();
+            fixedUpdate -= FIXED_DELTA_TIME;
+        }
+
         BeginDrawing();
         ClearBackground(SKYBLUE);
         BeginMode2D(*MainCamera);
-        
+        UpdateGame();
         EndMode2D();
+        DrawLine(0, screenHeight / 2, screenWidth, screenHeight / 2, LIME);
+        DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, LIME);
         EndDrawing();
     }
 
     FinishGame();
 
     SaveSettings();
+
+    SteamAPI_Shutdown();
+
+    return 0;
 }

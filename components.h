@@ -2,6 +2,7 @@
 #define COMPONENT_H
 
 #include "raylib.h"
+#include "settings.h"
 
 // Stores the position, the scale and the rotation of an object
 class Transform2D
@@ -23,6 +24,29 @@ public:
     Color color;
     SpriteRenderer(Transform2D *transform);
     void Draw();
+};
+
+class Collider
+{
+public:
+    bool isRound;
+    float width, height;
+    Collider(float width = 1.0f, float height = 1.0f);
+    Collider(bool isRound, float diameter = 1.0f);
+};
+
+class RigidBody 
+{
+private:
+    Transform2D *transform;
+    Collider *collider;
+    bool grounded;
+    void ApplyGravity();
+public:
+    Vector2 velocity;
+    float gravity;
+    RigidBody(Transform2D *transform, Collider *collider, float gravity = DEFAULT_GRAVITY);
+    void ApplyPhysics();
 };
 
 #endif

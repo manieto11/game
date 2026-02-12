@@ -1,14 +1,16 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "components.h"
 #include "gameObject.h"
 
-class Player : public virtual GameObject
+class Player : public GameObject
 {
-private:
+public:
     Transform2D transform;
     SpriteRenderer spriteRenderer;
-public:
+    Collider collider;
+    RigidBody rigidBody;
     Player();
     void Initialize();
     void Update();

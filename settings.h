@@ -5,11 +5,13 @@
 
 #define GAME_TITLE "game"
 
-#define FIXED_DELTA_TIME 0.2f;
+#define FIXED_DELTA_TIME 0.02f
 
 #define VERSION "early_dev"
 
 #define PIXELS_PER_UNIT 32
+
+#define DEFAULT_GRAVITY 9.8f
 
 // Configurable parameters
 

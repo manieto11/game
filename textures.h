@@ -3,7 +3,7 @@
 
 #include "raylib.h"
 
-Texture2D DefaultTexture;
+extern Texture2D DefaultTexture;
 
 void LoadGameTextures();
 void UnloadGameTextures();
