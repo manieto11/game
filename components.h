@@ -18,8 +18,9 @@ class SpriteRenderer
 {
 private:
     Transform2D *transform;
+
 public:
-    Texture2D* texture;
+    Texture2D *texture;
     Rectangle spriteRec;
     Color color;
     SpriteRenderer(Transform2D *transform);
@@ -35,18 +36,31 @@ public:
     Collider(bool isRound, float diameter = 1.0f);
 };
 
-class RigidBody 
+class RigidBody
 {
 private:
     Transform2D *transform;
     Collider *collider;
     bool grounded;
     void ApplyGravity();
+
 public:
     Vector2 velocity;
     float gravity;
     RigidBody(Transform2D *transform, Collider *collider, float gravity = DEFAULT_GRAVITY);
     void ApplyPhysics();
+};
+
+class PlayerController
+{
+    RigidBody *rigidBody;
+    bool enabled;
+
+public:
+    float moveSpeed;
+    PlayerController(RigidBody *rigidBody = nullptr, float moveSpeed = 5.0f);
+    void SetEnabled(bool value);
+    void Update();
 };
 
 #endif

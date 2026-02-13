@@ -28,7 +28,7 @@ WIN_RUNTIME_LIBS = steam_api64.dll
 LINUX_RUNTIME_LIBS = libsteam_api.so
 
 # ---------------- Targets ----------------
-all: game game_linux
+all: game_linux
 
 # ---------- Windows ----------
 game: $(OBJS_WIN)

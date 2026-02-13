@@ -26,8 +26,10 @@ void InitGame()
 
 void UpdateGame()
 {
-    for (int i = 0; i < MAX_GAME_OBJECTS; ++i) {
-        if (gameObjects[i] == nullptr) continue;
+    for (int i = 0; i < MAX_GAME_OBJECTS; ++i)
+    {
+        if (gameObjects[i] == nullptr)
+            continue;
 
         gameObjects[i]->Update();
     }
@@ -35,8 +37,10 @@ void UpdateGame()
 
 void FixedUpdateGame()
 {
-    for (int i = 0; i < MAX_GAME_OBJECTS; ++i) {
-        if (gameObjects[i] == nullptr) continue;
+    for (int i = 0; i < MAX_GAME_OBJECTS; ++i)
+    {
+        if (gameObjects[i] == nullptr)
+            continue;
 
         gameObjects[i]->FixedUpdate();
     }
@@ -46,8 +50,10 @@ void FinishGame()
 {
     delete MainCamera;
 
-    for (int i = 0; i < MAX_GAME_OBJECTS; ++i) {
-        if (gameObjects[i] == nullptr) continue;
+    for (int i = 0; i < MAX_GAME_OBJECTS; ++i)
+    {
+        if (gameObjects[i] == nullptr)
+            continue;
 
         delete gameObjects[i];
     }

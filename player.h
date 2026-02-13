@@ -11,6 +11,7 @@ public:
     SpriteRenderer spriteRenderer;
     Collider collider;
     RigidBody rigidBody;
+    PlayerController controller;
     Player();
     void Initialize();
     void Update();

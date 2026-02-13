@@ -22,11 +22,12 @@ int main()
 
     while (!WindowShouldClose())
     {
-        if (steamEnabled) SteamAPI_RunCallbacks();
+        if (steamEnabled)
+            SteamAPI_RunCallbacks();
 
         fixedUpdate += GetFrameTime();
 
-        while (fixedUpdate >= FIXED_DELTA_TIME) 
+        while (fixedUpdate >= FIXED_DELTA_TIME)
         {
             FixedUpdateGame();
             fixedUpdate -= FIXED_DELTA_TIME;
@@ -39,6 +40,7 @@ int main()
         EndMode2D();
         DrawLine(0, screenHeight / 2, screenWidth, screenHeight / 2, LIME);
         DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, LIME);
+        DrawFPS(10, 10);
         EndDrawing();
     }
 

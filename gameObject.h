@@ -20,7 +20,7 @@ public:
     virtual void FixedUpdate() = 0;
     // Called at the end of the execution
     virtual void Finalize() = 0;
-    
+
     virtual ~GameObject() {}
 };
 
