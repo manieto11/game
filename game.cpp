@@ -17,7 +17,7 @@ void InitGame()
     MainCamera->zoom = scaleMultiplier;
 
     Player *player = new Player();
-    player->rigidBody.gravity = 0.0f;
+    player->rigidBody.gravity = 1.0f;
     gameObjects[0] = player;
     player->Initialize();
 

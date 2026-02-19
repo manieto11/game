@@ -1,12 +1,11 @@
 #include "components.h"
 #include "settings.h"
 #include "textures.h"
-#include <cmath>
 
 Transform2D::Transform2D()
 {
-    position = {0, 0};
-    scale = {1, 1};
+    position = {0.0f, 0.0f};
+    scale = {1.0f, 1.0f};
     rotation = 0;
 }
 
@@ -42,7 +41,7 @@ void RigidBody::ApplyGravity()
     velocity.y -= gravity * FIXED_DELTA_TIME;
 }
 
-RigidBody::RigidBody(Transform2D *transform, Collider *collider, float gravity) : transform(transform), collider(collider), gravity(gravity), velocity({0.0f, 0.0f}) {}
+RigidBody::RigidBody(Transform2D *transform, Collider *collider, float gravity) : transform(transform), collider(collider), gravity(gravity), velocity({0.0f, 0.0f}), grounded(false) {}
 
 void RigidBody::ApplyPhysics()
 {
@@ -63,24 +62,15 @@ void PlayerController::Update()
     if (!enabled || rigidBody == nullptr)
         return;
 
-    Vector2 input = {0.0f, 0.0f};
+    float horizontalMovement = 0.0f;
 
-    if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP))
-        input.y += 1.0f;
-    if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN))
-        input.y -= 1.0f;
-    if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT))
-        input.x += 1.0f;
-    if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT))
-        input.x -= 1.0f;
+    if (IsGamepadAvailable(PLAYER_GAMEPAD))
+        horizontalMovement = GetGamepadAxisMovement(PLAYER_GAMEPAD, GAMEPAD_AXIS_RIGHT_X);
 
-    if (input.x != 0.0f || input.y != 0.0f)
-    {
-        float length = sqrtf((input.x * input.x) + (input.y * input.y));
-        input = {input.x / length, input.y / length};
-    }
+    if (IsKeyDown(KEY_D) && !IsKeyDown(KEY_A))
+        horizontalMovement = 1.0f;
+    else if (!IsKeyDown(KEY_D) && IsKeyDown(KEY_A))
+        horizontalMovement = -1.0f;
 
-    Vector2 velocity = {input.x * moveSpeed, input.y * moveSpeed};
-
-    rigidBody->velocity = velocity;
+    rigidBody->velocity.x = horizontalMovement;
 }

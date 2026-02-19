@@ -51,6 +51,8 @@ public:
     void ApplyPhysics();
 };
 
+#define PLAYER_GAMEPAD 0
+
 class PlayerController
 {
     RigidBody *rigidBody;

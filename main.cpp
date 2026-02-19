@@ -11,6 +11,7 @@ int main()
     if (fullscreen)
         SetWindowState(FLAG_FULLSCREEN_MODE);
     SetExitKey(KEY_NULL);
+    SetTargetFPS(60);
 
     InitGame();
 
