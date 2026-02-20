@@ -12,3 +12,16 @@ bool BoxCollider::Colliding(const Vector2 point)
 {
     return false;
 }
+
+GridCollider::GridCollider() : grid(nullptr) {}
+
+GridCollider::GridCollider(GridCollider &other) : grid(other.grid) {}
+
+GridCollider::GridCollider(Grid *grid) : grid(grid) {}
+
+GridCollider::GridCollider(Grid *grid, Vector2 origin) : grid(grid) {}
+
+bool GridCollider::Colliding(const Vector2 point)
+{
+    return false;
+}

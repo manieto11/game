@@ -19,6 +19,14 @@
 
 #define PLAYER_SPEED 5.0f * speed_multiplier * PIXELS_PER_UNIT
 
+#define DEFAULT_GRID_SIZE 128
+
+#define TILE_SIZE 32
+
+#define DEFAULT_GRID_SCALE 1.0f
+
+#define GRID_TEXTURE 
+
 // Configurable parameters
 
 inline int screenWidth = 800, 

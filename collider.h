@@ -2,6 +2,7 @@
 #define COLLIDER_H
 
 #include "raylib.h"
+#include "dual_grid_system.h"
 #include "transform.h"
 
 // Used for detecting collisions
@@ -24,6 +25,20 @@ public:
     BoxCollider(Transform2D *transform, Rectangle rect);
 
     Rectangle rectangle;
+
+    bool Colliding(const Vector2 point);
+};
+
+class GridCollider : public Collider
+{
+private:
+    Grid *grid;
+
+public:
+    GridCollider();
+    GridCollider(GridCollider &other);
+    GridCollider(Grid* grid);
+    GridCollider(Grid* grid, Vector2 origin);
 
     bool Colliding(const Vector2 point);
 };

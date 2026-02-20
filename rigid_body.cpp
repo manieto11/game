@@ -4,7 +4,10 @@
 void RigidBody::ApplyGravity()
 {
     if (grounded or gravity == 0.0f)
+    {
+        if (velocity.y < 0.0f) velocity.y = 0.0f;
         return;
+    }
 
     velocity.y -= gravity * FIXED_DELTA_TIME;
 }
