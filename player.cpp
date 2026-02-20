@@ -1,6 +1,15 @@
 #include "player.h"
 
-Player::Player() : transform(), spriteRenderer(&transform), collider(Collider()), rigidBody(&transform, &collider), controller(&rigidBody) {}
+Player::Player() : transform(new Transform2D()), spriteRenderer(new SpriteRenderer(transform)), collider(new BoxCollider(transform)), rigidBody(new RigidBody(transform, collider)), controller(new PlayerController(rigidBody)) {}
+
+Player::~Player()
+{
+    delete transform;
+    delete spriteRenderer;
+    delete collider;
+    delete rigidBody;
+    delete controller;
+}
 
 void Player::Initialize()
 {
@@ -9,13 +18,17 @@ void Player::Initialize()
 
 void Player::Update()
 {
-    controller.Update();
-    spriteRenderer.Draw();
+    controller->Update();
 }
 
 void Player::FixedUpdate()
 {
-    rigidBody.ApplyPhysics();
+    rigidBody->ApplyPhysics();
+}
+
+void Player::Draw()
+{
+    spriteRenderer->Draw();
 }
 
 void Player::Finalize()

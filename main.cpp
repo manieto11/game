@@ -34,14 +34,20 @@ int main()
             fixedUpdate -= FIXED_DELTA_TIME;
         }
 
-        BeginDrawing();
-        ClearBackground(SKYBLUE);
-        BeginMode2D(*MainCamera);
         UpdateGame();
+
+        BeginDrawing();
+        
+        ClearBackground(SKYBLUE);
+
+        BeginMode2D(*MainCamera);
+        DrawGame();
         EndMode2D();
+
         DrawLine(0, screenHeight / 2, screenWidth, screenHeight / 2, LIME);
         DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, LIME);
         DrawFPS(10, 10);
+
         EndDrawing();
     }
 

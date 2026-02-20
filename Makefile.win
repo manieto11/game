@@ -10,7 +10,7 @@ BUILD_DIR = builds
 OBJ_DIR   = obj/windows
 
 # ---------------- Files ----------------
-SRCS = components.cpp game.cpp textures.cpp gameObject.cpp player.cpp settings.cpp main.cpp
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
 # ---------------- Flags ----------------
@@ -40,7 +40,7 @@ game: $(OBJS)
 	@if not exist $(BUILD_DIR)\steam_appid.txt echo 480 > $(BUILD_DIR)\steam_appid.txt
 	@echo Build complete: $(BUILD_DIR)\game.exe
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+$(OBJ_DIR)/%.o: %.cpp
 	@if not exist "obj\windows" mkdir "obj\windows"
 	$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
 

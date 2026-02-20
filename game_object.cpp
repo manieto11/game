@@ -1,4 +1,4 @@
-#include "gameObject.h"
+#include "game_object.h"
 
 bool GameObject::IsEnabled()
 {

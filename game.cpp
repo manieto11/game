@@ -1,4 +1,6 @@
 #include "game.h"
+#include "settings.h"
+#include "textures.h"
 
 Camera2D *MainCamera = nullptr;
 Player *MainPlayer = nullptr;
@@ -17,7 +19,6 @@ void InitGame()
     MainCamera->zoom = scaleMultiplier;
 
     Player *player = new Player();
-    player->rigidBody.gravity = 1.0f;
     gameObjects[0] = player;
     player->Initialize();
 
@@ -43,6 +44,17 @@ void FixedUpdateGame()
             continue;
 
         gameObjects[i]->FixedUpdate();
+    }
+}
+
+void DrawGame()
+{
+    for (int i = 0; i < MAX_GAME_OBJECTS; ++i)
+    {
+        if (gameObjects[i] == nullptr)
+            continue;
+
+        gameObjects[i]->Draw();
     }
 }
 
