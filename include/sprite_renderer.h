@@ -9,12 +9,14 @@ class SpriteRenderer
 {
 private:
     Transform2D *transform;
+    bool textureValid;
 
 public:
     Texture2D *texture;
     Rectangle spriteRec;
     Color color;
     SpriteRenderer(Transform2D *transform);
+    void SetTexture(Texture2D *newTexture);
     void Draw();
 };
 

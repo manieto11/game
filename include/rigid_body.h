@@ -12,6 +12,7 @@ private:
     Collider *collider;
     bool grounded;
     void ApplyGravity();
+    void CheckCollisions();
 
 public:
     Vector2 velocity;

@@ -1,0 +1,13 @@
+2D PLATFORMER GAME IDEAS - February 25, 2026
+
+Building on the conscious robot concept, the player controls R-743, a maintenance robot that discovers encrypted memories of the world before the apocalypse. The game focuses on vertical exploration through a massive ruined mega city tower with distinct zones (flooded basements, overgrown gardens, tech facilities, sky bridges).
+
+Gameplay mechanics:
+- Modular upgrade system: salvage parts from defeated robots to unlock new abilities (double jump, dash, wall climb, shield)
+- Dual nature system: stealth past hostile machines OR fight them for parts
+- Environmental puzzles using robot abilities (hack terminals, power circuits, activate old machinery)
+- Boss battles drop unique components that fundamentally change movement (magnetic boots, propulsion jets, etc.)
+
+Story hook: You find a buried AI core containing a child's voice - the last human child who uploaded their consciousness before humanity fell. They guide you to restore power to underground bunkers where humans survive in cryo-sleep.
+
+Visual style: Industrial ruins mixed with futuristic tech and nature reclamation

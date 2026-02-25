@@ -1,7 +1,7 @@
 #include "dual_grid_system.h"
 #include "settings.h"
 
-Grid::Grid() : width(DEFAULT_GRID_SIZE), height(DEFAULT_GRID_SIZE), tiles(new bool[DEFAULT_GRID_SIZE * DEFAULT_GRID_SIZE]), tileValues(new TileValue[(DEFAULT_GRID_SIZE + 1) * (DEFAULT_GRID_SIZE + 1)]), scale(DEFAULT_GRID_SCALE) {}
+Grid::Grid() : width(DEFAULT_GRID_SIZE), height(DEFAULT_GRID_SIZE), tiles(new bool[DEFAULT_GRID_SIZE * DEFAULT_GRID_SIZE]), tileValues(new TileValue[(DEFAULT_GRID_SIZE + 1) * (DEFAULT_GRID_SIZE + 1)]), scale(DEFAULT_GRID_SCALE), offset({0, 0}) {}
 
 Grid::Grid(Grid &other) : width(other.width), height(other.height), tiles(new bool[other.width * other.height]), tileValues(new TileValue[(other.width + 1) * (other.height + 1)])
 {
@@ -15,7 +15,7 @@ Grid::Grid(Grid &other) : width(other.width), height(other.height), tiles(new bo
         tileValues[i] = other.tileValues[i];
 }
 
-Grid::Grid(int width, int height) : width(width), height(height), tiles(new bool[width * height]), tileValues(new TileValue[width * height]), scale(DEFAULT_GRID_SCALE) {}
+Grid::Grid(int width, int height) : width(width), height(height), tiles(new bool[width * height]), tileValues(new TileValue[width * height]), scale(DEFAULT_GRID_SCALE), offset({0, 0}) {}
 
 Grid::~Grid()
 {
@@ -46,7 +46,7 @@ void Grid::DrawTiles()
         if (tileValues[i] == 0) continue;
 
         Rectangle source = {(tileValues[i] % 4) * TILE_SIZE, (tileValues[i] / 4) * TILE_SIZE, TILE_SIZE, TILE_SIZE}, 
-            dest = {(i % (width + 1)) * TILE_SIZE + offset.x * PIXELS_PER_UNIT, (i / (width + 1)) * TILE_SIZE + offset.y * PIXELS_PER_UNIT, TILE_SIZE * scale, TILE_SIZE * scale};
+            dest = {(i % (width + 1)) * TILE_SIZE + (offset.x - 0.5f) * PIXELS_PER_UNIT, (i / (width + 1)) * TILE_SIZE + (offset.y - 0.5f) * PIXELS_PER_UNIT, TILE_SIZE * scale, TILE_SIZE * scale};
 
         DrawTexturePro(texture, source, dest, {0, 0}, 0, WHITE);
     }
@@ -92,6 +92,16 @@ void Grid::RemoveTile(int x, int y)
 void Grid::SetScale(float newScale)
 {
     scale = newScale;
+}
+
+void Grid::SetOffset(Vector2 newOffset)
+{
+    offset = newOffset;
+}
+
+Vector2 Grid::GetOffset()
+{
+    return offset;
 }
 
 void Grid::SetTileValues()

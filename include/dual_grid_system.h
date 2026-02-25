@@ -34,6 +34,7 @@ public:
     void SetTileValues();
 
     void SetOffset(Vector2 offset);
+    Vector2 GetOffset();
 };
 
 Texture2D GenerateGridTemplate();

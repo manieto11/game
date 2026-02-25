@@ -9,7 +9,7 @@ class Player : public GameObject
 public:
     Transform2D* transform;
     SpriteRenderer* spriteRenderer;
-    Collider* collider;
+    BoxCollider* collider;
     RigidBody* rigidBody;
     PlayerController* controller;
 

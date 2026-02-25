@@ -5,9 +5,9 @@
 
 int main()
 {
-    SetTraceLogLevel(LOG_WARNING);
+    //SetTraceLogLevel(LOG_WARNING);
 
-    InitWindow(screenWidth, screenHeight, GAME_TITLE);
+    InitWindow(screenWidth, screenHeight, GAME_TITLE " " VERSION);
     if (fullscreen)
         SetWindowState(FLAG_FULLSCREEN_MODE);
     SetExitKey(KEY_NULL);

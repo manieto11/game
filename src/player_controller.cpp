@@ -1,7 +1,9 @@
 #include "player_controller.h"
 #include "settings.h"
 
-PlayerController::PlayerController(RigidBody *rigidBody) : rigidBody(rigidBody), enabled(true), moveSpeed(PLAYER_SPEED) {}
+PlayerController::PlayerController() {}
+
+PlayerController::PlayerController(RigidBody *rigidBody) : rigidBody(rigidBody), enabled(true) {}
 
 void PlayerController::SetEnabled(bool value)
 {
@@ -23,5 +25,5 @@ void PlayerController::Update()
     else if (!IsKeyDown(KEY_D) && IsKeyDown(KEY_A))
         horizontalMovement = -1.0f;
 
-    rigidBody->velocity.x = horizontalMovement;
+    rigidBody->velocity.x = horizontalMovement * PLAYER_SPEED;
 }

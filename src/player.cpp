@@ -1,6 +1,11 @@
 #include "player.h"
+#include "settings.h"
 
-Player::Player() : transform(new Transform2D()), spriteRenderer(new SpriteRenderer(transform)), collider(new BoxCollider(transform)), rigidBody(new RigidBody(transform, collider)), controller(new PlayerController(rigidBody)) {}
+Player::Player() : transform(new Transform2D()), spriteRenderer(new SpriteRenderer(transform)), collider(new BoxCollider(transform)), rigidBody(new RigidBody(transform, collider)), controller(new PlayerController(rigidBody)) 
+{
+    collider->rectangle.x = -0.5;
+    collider->rectangle.y = -0.5;
+}
 
 Player::~Player()
 {

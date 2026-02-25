@@ -17,7 +17,7 @@
 
 #define PLAYER_GAMEPAD 0
 
-#define PLAYER_SPEED 5.0f * speed_multiplier * PIXELS_PER_UNIT
+#define PLAYER_SPEED 2.0f * speed_multiplier
 
 #define DEFAULT_GRID_SIZE 128
 

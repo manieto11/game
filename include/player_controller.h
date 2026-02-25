@@ -9,7 +9,6 @@ class PlayerController
     bool enabled;
 
 public:
-    float moveSpeed;
     PlayerController();
     PlayerController(RigidBody *playerRigidBody);
     void SetEnabled(bool value);
