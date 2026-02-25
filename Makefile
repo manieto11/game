@@ -2,9 +2,10 @@
 CXX = g++
 
 # ---------------- Directories ----------------
-SRC_DIR   = .
+SRC_DIR   = ./src
 BUILD_DIR = builds
-OBJ_DIR   = obj/linux
+OBJ_DIR   = obj
+INC_DIR	  = ./include
 
 # ---------------- Files ----------------
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
@@ -32,7 +33,7 @@ game: $(OBJS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
 
 # ---------------- Utilities ----------------
 clean:

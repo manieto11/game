@@ -5,13 +5,13 @@
 CXX = g++
 
 # ---------------- Directories ----------------
-SRC_DIR   = .
+SRC_DIR   = ./src
 BUILD_DIR = builds
-OBJ_DIR   = obj/windows
+OBJ_DIR   = obj
 
 # ---------------- Files ----------------
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
-OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRCS))
+OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
 # ---------------- Flags ----------------
 CXXFLAGS = -O2 -std=c++17
@@ -23,9 +23,12 @@ INCLUDE_DIRS = -IC:/raylib/src
 # Uncomment and set correct path after downloading:
 INCLUDE_DIRS += -IC:/steamworks/sdk/public
 
+# Include header files
+INCLUDE_DIRS += -I./include
+
 # ---------------- Libraries ----------------
 LIBS = -lraylib -lsteam_api64 -lopengl32 -lgdi32 -lwinmm -luser32 -lkernel32 -lshell32 -lws2_32
-LIBDIRS = -L. -LC:/raylib/src
+LIBDIRS = -L. -L./steam -LC:/raylib/src
 
 # Runtime DLLs to copy
 RUNTIME_LIBS = steam_api64.dll
@@ -36,12 +39,12 @@ all: game
 game: $(OBJS)
 	@if not exist "$(BUILD_DIR)" mkdir "$(BUILD_DIR)"
 	$(CXX) $(OBJS) $(LIBDIRS) $(LIBS) -o $(BUILD_DIR)\game.exe
-	@if exist steam_api64.dll copy /Y steam_api64.dll $(BUILD_DIR)\ >nul
+	@if exist steam\steam_api64.dll copy /Y steam\steam_api64.dll $(BUILD_DIR)\ >nul
 	@if not exist $(BUILD_DIR)\steam_appid.txt echo 480 > $(BUILD_DIR)\steam_appid.txt
 	@echo Build complete: $(BUILD_DIR)\game.exe
 
-$(OBJ_DIR)/%.o: %.cpp
-	@if not exist "obj\windows" mkdir "obj\windows"
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@if not exist "obj" mkdir "obj"
 	$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
 
 # ---------------- Utilities ----------------
