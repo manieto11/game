@@ -1,18 +1,11 @@
+#include "box2d-lite/box2d_lite.h"
 #include "game.h"
-#include "raylib.h"
+#include "custom_raylib.h"
 #include "settings.h"
 #include "steam/steam_api.h"
 
 int main()
 {
-    //SetTraceLogLevel(LOG_WARNING);
-
-    InitWindow(screenWidth, screenHeight, GAME_TITLE " " VERSION);
-    if (fullscreen)
-        SetWindowState(FLAG_FULLSCREEN_MODE);
-    SetExitKey(KEY_NULL);
-    SetTargetFPS(60);
-
     InitGame();
 
     steamEnabled = SteamAPI_Init();

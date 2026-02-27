@@ -14,6 +14,14 @@ int ColliderCount = 0;
 
 void InitGame()
 {
+    //SetTraceLogLevel(LOG_WARNING);
+
+    InitWindow(screenWidth, screenHeight, GAME_TITLE " " VERSION);
+    if (fullscreen)
+        SetWindowState(FLAG_FULLSCREEN_MODE);
+    SetExitKey(KEY_NULL);
+    SetTargetFPS(60);
+    
     LoadSettings();
     LoadGameTextures();
 
