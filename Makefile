@@ -17,8 +17,8 @@ LDFLAGS  = -Wl,-rpath,'$$ORIGIN'
 
 # ---------------- Libraries ----------------
 LIBS     = -lraylib -lsteam_api
-LIBDIRS  = -L.
-RUNTIME_LIBS = libsteam_api.so
+LIBDIRS  = -L. -L./steam
+RUNTIME_LIBS = steam/libsteam_api.so
 
 # ---------------- Targets ----------------
 all: game

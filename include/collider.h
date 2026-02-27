@@ -47,6 +47,8 @@ public:
 
     bool Colliding(Collider *other);
     bool Colliding(const Vector2 point);
+
+    void DrawDebug();
 };
 
 #endif
