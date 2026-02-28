@@ -33,7 +33,7 @@ int main()
         
         ClearBackground(SKYBLUE);
 
-        BeginMode2D(*MainCamera);
+        BeginMode2D(MainCamera);
         DrawGame();
         EndMode2D();
 

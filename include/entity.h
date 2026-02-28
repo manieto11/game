@@ -7,11 +7,13 @@
 typedef struct Entity
 {
 	Body body;
-	Vec2 size;
 	Texture2D *texture;
+	Rectangle textureSource;
+
+	Entity();
 } Entity;
 
-void DrawEntity(Entity &entity);
-void DrawEntityBorder(Entity &entity);
+void DrawEntity(Entity *entity);
+void DrawEntityBorder(Entity *entity);
 
 #endif

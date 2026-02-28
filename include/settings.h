@@ -7,13 +7,13 @@
 
 #define GAME_TITLE "game"
 
-#define FIXED_DELTA_TIME 0.02f
-
 #define VERSION "early_dev"
+
+#define FIXED_DELTA_TIME 0.02f
 
 #define PIXELS_PER_UNIT 32
 
-#define DEFAULT_GRAVITY 8.0f
+#define GAME_GRAVITY 8.0f
 
 #define PLAYER_GAMEPAD 0
 
@@ -23,9 +23,7 @@
 
 #define TILE_SIZE 32
 
-#define DEFAULT_GRID_SCALE 1.0f
-
-#define GRID_TEXTURE 
+#define DEFAULT_GRID_SCALE 1.0f 
 
 // Configurable parameters
 
