@@ -9,6 +9,7 @@
 * It is provided "as is" without express or implied warranty.
 */
 
+#include <algorithm>
 #include "box2d-lite/world.h"
 #include "box2d-lite/body.h"
 #include "box2d-lite/joint.h"
@@ -32,6 +33,15 @@ void World::Add(Body* body)
 void World::Add(Joint* joint)
 {
 	joints.push_back(joint);
+}
+
+void World::Remove(Body *body)
+{
+	auto iter = std::find(bodies.begin(), bodies.end(), body);
+	if (iter != bodies.end())
+	{
+		bodies.erase(iter);
+	}
 }
 
 void World::Clear()

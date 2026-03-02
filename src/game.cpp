@@ -5,7 +5,10 @@
 
 Camera2D MainCamera;
 World MainWorld({0.0f, -GAME_GRAVITY}, 4);
-Entity *Entities[MAX_ENTITIES];
+Entity *Entities[MAX_ENTITIES] = {nullptr};
+int EntityCount = 0;
+Platform *Platforms[MAX_PLATFORMS] = {nullptr};
+int PlatformCount = 0;
 
 void InitGame()
 {
@@ -25,17 +28,9 @@ void InitGame()
     MainCamera.target = {0, 0};
     MainCamera.zoom = scaleMultiplier;
 
-    Entities[0] = new Entity();
-    Entities[0]->body.Set({1.0f, 1.0f}, 1.0f);
+    PlayerEntity = CreateEntity();
 
-    Entities[1] = new Entity();
-    Entities[1]->body.Set({32.0f, 1.0f}, FLT_MAX);
-    Entities[1]->body.position = {0.0f, -4.0f};
-
-    MainWorld.Add(&Entities[0]->body);
-    MainWorld.Add(&Entities[1]->body);
-
-    PlayerEntity = Entities[0];
+    CreatePlatform()->body.position = {0.0f, -2.0f};
 }
 
 void UpdateGame()
@@ -50,12 +45,128 @@ void FixedUpdateGame()
 
 void DrawGame()
 {
-    DrawEntity(Entities[0]);
-    DrawEntity(Entities[1]);
+    for (int i = 0; i < EntityCount; i++) {
+        DrawEntity(Entities[i]);
+    }
+
+    for (int i = 0; i < PlatformCount; i++) {
+        DrawPlatformBorders(Platforms[i]);
+    }
 }
 
 void FinishGame()
 {
-    delete Entities[0];
-    delete Entities[1];
+    ClearEntities();
+    ClearPlatforms();
+}
+
+Entity *CreateEntity()
+{
+    Entity *entity = new Entity();
+
+    if (AddEntity(entity))
+        return entity;
+
+    delete entity;
+
+    return nullptr;
+}
+
+bool AddEntity(Entity *entity)
+{
+    if (EntityCount >= MAX_ENTITIES) 
+    {
+        TraceLog(LOG_WARNING, "Not enough space for more entities!");
+        return false;
+    }
+
+    MainWorld.Add(&entity->body);
+
+    Entities[EntityCount] = entity;
+    EntityCount++;
+
+    return true;
+}
+
+void RemoveEntity(Entity *entity)
+{
+    for (int i = 0; i <  EntityCount; ++i)
+    {
+        if (Entities[i] != entity) 
+            continue;
+
+        MainWorld.Remove(&entity->body);
+
+        delete Entities[i];
+        EntityCount--;
+        Entities[i] = Entities[EntityCount];
+
+        return;
+    }
+}
+
+void ClearEntities()
+{
+    for (int i = 0; i <  EntityCount; ++i)
+    {
+        delete Entities[i];
+    }
+
+    EntityCount = 0;
+}
+
+Platform *CreatePlatform()
+{
+    Platform *platform = new Platform();
+
+    platform->body.mass = FLT_MAX;
+
+    if (AddPlatform(platform))
+        return platform;
+
+    delete platform;
+    return nullptr;
+}
+
+bool AddPlatform(Platform *platform)
+{
+    if (PlatformCount >= MAX_PLATFORMS) 
+    {
+        TraceLog(LOG_WARNING, "Not enough space for more platforms!");
+        return false;
+    }
+
+    MainWorld.Add(&platform->body);
+
+    Platforms[PlatformCount] = platform;
+    PlatformCount++;
+
+    return true;
+}
+
+void RemovePlatform(Platform *platform)
+{
+    for (int i = 0; i <  PlatformCount; ++i)
+    {
+        if (Platforms[i] != platform) 
+            continue;
+
+        MainWorld.Remove(&platform->body);
+
+        delete Platforms[i];
+        PlatformCount--;
+        Platforms[i] = Platforms[PlatformCount];
+
+        return;
+    }
+}
+
+void ClearPlatforms()
+{
+    for (int i = 0; i <  PlatformCount; ++i)
+    {
+        delete Platforms[i];
+    }
+
+    PlatformCount = 0;
 }

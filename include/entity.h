@@ -4,16 +4,19 @@
 #include "box2d-lite/box2d_lite.h"
 #include "custom_raylib.h"
 
-typedef struct Entity
+struct Entity
 {
 	Body body;
-	Texture2D *texture;
 	Rectangle textureSource;
+	Texture2D *texture;
 
 	Entity();
-} Entity;
+	Entity(Vector2 position);
+};
 
+// Draw the entity
 void DrawEntity(Entity *entity);
+// Draw the entity's border for debugging
 void DrawEntityBorder(Entity *entity);
 
 #endif
