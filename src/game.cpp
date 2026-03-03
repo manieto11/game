@@ -30,7 +30,7 @@ void InitGame()
 
     PlayerEntity = CreateEntity();
 
-    CreatePlatform()->body.position = {0.0f, -2.0f};
+    CreatePlatform({16.0f, 1.0f}, {0.0f, -2.0f});
 }
 
 void UpdateGame()
@@ -63,6 +63,8 @@ void FinishGame()
 Entity *CreateEntity()
 {
     Entity *entity = new Entity();
+
+    entity->body.invI = 0.0f;
 
     if (AddEntity(entity))
         return entity;
@@ -120,6 +122,20 @@ Platform *CreatePlatform()
     Platform *platform = new Platform();
 
     platform->body.mass = FLT_MAX;
+
+    if (AddPlatform(platform))
+        return platform;
+
+    delete platform;
+    return nullptr;
+}
+
+Platform *CreatePlatform(Vector2 size, Vector2 position)
+{
+    Platform *platform = new Platform();
+
+    platform->body.Set(size, FLT_MAX);
+    platform->body.position = position;
 
     if (AddPlatform(platform))
         return platform;

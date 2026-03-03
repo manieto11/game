@@ -20,7 +20,7 @@ void DrawEntity(Entity *entity)
 
     //TraceLog(LOG_INFO, "Painting entity at {%.1f, %.1f}", destination.x, destination.y);
 
-    DrawTexturePro(*entity->texture, entity->textureSource, destination, offset, DEG2RAD * entity->body.rotation, WHITE);
+    DrawTexturePro(*entity->texture, entity->textureSource, destination, offset, - RAD2DEG * entity->body.rotation, WHITE);
 }
 
 void DrawEntityBorder(Entity *entity)
