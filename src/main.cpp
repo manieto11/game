@@ -1,4 +1,3 @@
-#include "box2d-lite/box2d_lite.h"
 #include "game.h"
 #include "custom_raylib.h"
 #include "settings.h"

@@ -1,19 +1,29 @@
 # ---------------- Compiler ----------------
 CXX = g++
+CC  = gcc
 
 # ---------------- Directories ----------------
 SRC_DIR   = ./src
 BUILD_DIR = builds
 OBJ_DIR   = obj
 INC_DIR	  = ./include
+BOX_DIR		= ./box2D-src
 
 # ---------------- Files ----------------
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
+BOX_S = $(wildcard $(BOX_DIR)/*.c)
+BOX_O = $(patsubst $(BOX_DIR)/%.c,$(OBJ_DIR)/%.a,$(BOX_S))
+
 # ---------------- Flags ----------------
 CXXFLAGS = -O2
 LDFLAGS  = -Wl,-rpath,'$$ORIGIN'
+
+CFLAGS = -O2 -std=c99
+
+# C-specific flags
+C_EXTRA_FLAGS =
 
 # ---------------- Libraries ----------------
 LIBS     = -lraylib -lsteam_api
@@ -25,7 +35,7 @@ all: game
 
 game: $(OBJS)
 	@mkdir -p $(BUILD_DIR)
-	$(CXX) $(OBJS) $(LDFLAGS) $(LIBDIRS) $(LIBS) -o $(BUILD_DIR)/game.AppImage
+	$(CXX) $(OBJS) box2D.o $(LDFLAGS) $(LIBDIRS) $(LIBS) -o $(BUILD_DIR)/game.AppImage
 	@for f in $(RUNTIME_LIBS); do \
 		if [ -f "$$f" ]; then cp -f "$$f" $(BUILD_DIR)/; fi; \
 	done
@@ -34,6 +44,10 @@ game: $(OBJS)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
+
+$(OBJ_DIR)/%.a: $(BOX_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(C_EXTRA_FLAGS) $(INCL_DIRS) -c $< -o $@
 
 # ---------------- Utilities ----------------
 clean:

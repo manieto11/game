@@ -10,9 +10,9 @@ bool IsGrounded(Platform** platforms, int platformCount)
 {
     for (int i = 0; i < platformCount; ++i)
     {
-        Vector2 offset = 0.5f * platforms[i]->body.width, topRight = platforms[i]->body.position + offset, bottomLeft = platforms[i]->body.position - offset;
-        float playerOffsetX = 0.45f * PlayerEntity->body.width.x, playerOffsetY = 0.5f * PlayerEntity->body.width.y;
-        Vector2 offsetCenter = {PlayerEntity->body.position.x, PlayerEntity->body.position.y - playerOffsetY}, offsetLeft = {PlayerEntity->body.position.x - playerOffsetX, PlayerEntity->body.position.y - playerOffsetY}, offsetRight = {PlayerEntity->body.position.x + playerOffsetX, PlayerEntity->body.position.y - playerOffsetY};
+        Vector2 platformPosition = b2Body_GetPosition(platforms[i]->body), offset = 0.5f * platforms[i]->size, topRight = platformPosition + offset, bottomLeft = platformPosition - offset;
+        float playerOffsetX = 0.45f * PlayerEntity->size.x, playerOffsetY = 0.5f * PlayerEntity->size.y;
+        Vector2 playerPosition = b2Body_GetPosition(PlayerEntity->body), offsetCenter = {playerPosition.x, playerPosition.y - playerOffsetY}, offsetLeft = {playerPosition.x - playerOffsetX, playerPosition.y - playerOffsetY}, offsetRight = {playerPosition.x + playerOffsetX, playerPosition.y - playerOffsetY};
 
         if (PointInsideBox(topRight, bottomLeft, offsetCenter) || 
             PointInsideBox(topRight, bottomLeft, offsetLeft) ||
@@ -28,7 +28,7 @@ void Jump()
     if (elapsedJumpTime != 0.0f)
         elapsedJumpTime = 0.0f;
 
-    PlayerEntity->body.velocity.y = 7.0f;
+    b2Body_SetLinearVelocity(PlayerEntity->body, {b2Body_GetLinearVelocity(PlayerEntity->body).x, 7.0f});
 }
 
 void UpdatePlayer(Platform** platforms, int platformCount)
@@ -57,6 +57,8 @@ void UpdatePlayer(Platform** platforms, int platformCount)
         Jump();
     }
 
+    Vector2 velocity = b2Body_GetLinearVelocity(PlayerEntity->body);
+
     float movingX;
 
     if (IsGamepadAvailable(PLAYER_GAMEPAD))
@@ -72,16 +74,16 @@ void UpdatePlayer(Platform** platforms, int platformCount)
             movingX = axisValue * PLAYER_SPEED;
     }
     else if ((IsKeyDown(movingLeftKey) || IsKeyDown(movingLeftKeySecondary)) && !(IsKeyDown(movingRightKey) || IsKeyDown(movingRightKeySecondary)))
-        movingX = grounded ? -PLAYER_SPEED : PlayerEntity->body.velocity.x - PLAYER_AIR_ACCELERATION;
+        movingX = grounded ? -PLAYER_SPEED : velocity.x - PLAYER_AIR_ACCELERATION;
     else if (!(IsKeyDown(movingLeftKey) || IsKeyDown(movingLeftKeySecondary)) && (IsKeyDown(movingRightKey) || IsKeyDown(movingRightKeySecondary)))
-        movingX = grounded ? PLAYER_SPEED : PlayerEntity->body.velocity.x + PLAYER_AIR_ACCELERATION;
+        movingX = grounded ? PLAYER_SPEED : velocity.x + PLAYER_AIR_ACCELERATION;
     else
-        if (grounded || PlayerEntity->body.velocity.x == 0.0f) 
+        if (grounded || velocity.x == 0.0f) 
             movingX = 0.0f;
         else
-            movingX = PlayerEntity->body.velocity.x > 0.0f ? (PlayerEntity->body.velocity.x - PLAYER_AIR_ACCELERATION / 2.0f) : (PlayerEntity->body.velocity.x + PLAYER_AIR_ACCELERATION / 2.0f);
+            movingX = velocity.x > 0.0f ? (velocity.x - PLAYER_AIR_ACCELERATION / 2.0f) : (velocity.x + PLAYER_AIR_ACCELERATION / 2.0f);
 
     SetRange(movingX, -PLAYER_SPEED, PLAYER_SPEED);
 
-    PlayerEntity->body.velocity.x = movingX;
+    velocity.x = movingX;
 }

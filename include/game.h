@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "box2d-lite/box2d_lite.h"
+#include "box2d/box2d.h"
 #include "entity.h"
 #include "platform.h"
 #include "custom_raylib.h"
@@ -10,7 +10,7 @@
 #define MAX_PLATFORMS 128
 
 extern Camera2D MainCamera;
-extern World MainWorld;
+extern b2WorldId MainWorld;
 extern Entity *Entities[MAX_ENTITIES];
 extern int EntityCount;
 extern Platform *Platforms[MAX_PLATFORMS];

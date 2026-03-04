@@ -1,7 +1,8 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include "raylib.h"
+#include "box2d/box2d.h"
+#include "custom_raylib.h"
 
 // Title of the game's window
 #define GAME_TITLE "game"
@@ -25,7 +26,7 @@
 #define PLAYER_DOUBLE_JUMP_DELAY 0.5f
 
 // Set to 0 to hide debug information, set to 1 otherwise to show it
-#define DEBUG 0
+#define DEBUG 1
 
 // The width of the game window
 inline int screenWidth = 800;
@@ -50,7 +51,7 @@ inline KeyboardKey movingLeftKey = KEY_A,
 inline KeyboardKey movingRightKey = KEY_D,
     movingRightKeySecondary = KEY_RIGHT;
 
-//Load the user settings. Call LoadSettings before finishing execution to keep any changes
+//Load the user settings. Call SaveSettings before finishing execution to keep any changes
 void LoadSettings();
 //Save the user settings
 void SaveSettings();

@@ -2,22 +2,10 @@
 #include "custom_raylib.h"
 #include "settings.h"
 
-Platform::Platform()
-{
-    body.Set({1.0f, 1.0f}, FLT_MAX);
-}
-
-Platform::Platform(World *world)
-{
-    body.Set({1.0f, 1.0f}, FLT_MAX);
-
-    world->Add(&body);
-}
-
 void DrawPlatformBorders(const Platform* platform)
 {
-    Vec2 offset = PIXELS_PER_UNIT / 2.0f * platform->body.width,
-        center = PIXELS_PER_UNIT * platform->body.position;
+    Vector2 offset = PIXELS_PER_UNIT / 2.0f * platform->size,
+        center = PIXELS_PER_UNIT * b2Body_GetPosition(platform->body);
 
     center.y = -center.y;
 

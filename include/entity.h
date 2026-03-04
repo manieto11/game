@@ -1,17 +1,17 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "box2d-lite/box2d_lite.h"
+#include "box2d/box2d.h"
 #include "custom_raylib.h"
 
 struct Entity
 {
-	Body body;
+	b2BodyId body;
 	Rectangle textureSource;
 	Texture2D *texture;
+	const Vector2 size;
 
 	Entity();
-	Entity(Vector2 position);
 };
 
 // Draw the entity

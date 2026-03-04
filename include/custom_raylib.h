@@ -86,7 +86,7 @@
 #define RAYLIB_H
 
 #include <stdarg.h>     // Required for: va_list - Only used by TraceLogCallback
-#include "box2d-lite/math_utils.h"
+#include "box2d/math_functions.h"
 
 #define RAYLIB_VERSION_MAJOR 5
 #define RAYLIB_VERSION_MINOR 5
@@ -213,7 +213,7 @@
 #endif
 
 // Vector2, 2 components
-typedef Vec2 Vector2;
+typedef b2Vec2 Vector2;
 
 // Vector3, 3 components
 typedef struct Vector3 {

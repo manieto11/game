@@ -1,14 +1,13 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
-#include "box2d-lite/box2d_lite.h"
+#include "box2d/box2d.h"
+#include "custom_raylib.h"
 
 struct Platform
 {
-    Body body;
-
-	Platform();
-	Platform(World *world);
+    b2BodyId body;
+	Vector2 size;
 };
 
 void DrawPlatformBorders(const Platform* platform);

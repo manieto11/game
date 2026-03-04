@@ -4,7 +4,7 @@
 #include "textures.h"
 
 Camera2D MainCamera;
-World MainWorld({0.0f, -GAME_GRAVITY}, 4);
+b2WorldId MainWorld;
 Entity *Entities[MAX_ENTITIES] = {nullptr};
 int EntityCount = 0;
 Platform *Platforms[MAX_PLATFORMS] = {nullptr};
@@ -28,6 +28,11 @@ void InitGame()
     MainCamera.target = {0, 0};
     MainCamera.zoom = scaleMultiplier;
 
+    b2WorldDef worldDef = b2DefaultWorldDef();
+    worldDef.gravity = {0.0f, - GAME_GRAVITY};
+
+    MainWorld = b2CreateWorld(&worldDef);
+
     PlayerEntity = CreateEntity();
 
     CreatePlatform({16.0f, 1.0f}, {0.0f, -2.0f});
@@ -41,7 +46,7 @@ void UpdateGame()
 
 void FixedUpdateGame()
 {
-    MainWorld.Step(FIXED_DELTA_TIME);
+    b2World_Step(MainWorld, FIXED_DELTA_TIME, 4);
 }
 
 void DrawGame()
@@ -64,16 +69,24 @@ void FinishGame()
 {
     ClearEntities();
     ClearPlatforms();
+
+    b2DestroyWorld(MainWorld);
 }
 
 Entity *CreateEntity()
 {
     Entity *entity = new Entity();
 
-    entity->body.invI = 0.0f;
+    if (AddEntity(entity)) 
+    {
 
-    if (AddEntity(entity))
+        b2BodyDef bodyDef = b2DefaultBodyDef();
+        bodyDef.type = b2_dynamicBody;
+
+        entity->body = b2CreateBody(MainWorld, &bodyDef);
+
         return entity;
+    }
 
     delete entity;
 
@@ -88,8 +101,6 @@ bool AddEntity(Entity *entity)
         return false;
     }
 
-    MainWorld.Add(&entity->body);
-
     Entities[EntityCount] = entity;
     EntityCount++;
 
@@ -103,13 +114,13 @@ void RemoveEntity(Entity *entity)
         if (Entities[i] != entity) 
             continue;
 
-        MainWorld.Remove(&entity->body);
+        b2DestroyBody(entity->body);
 
         delete Entities[i];
         EntityCount--;
         Entities[i] = Entities[EntityCount];
 
-        return;
+        break;
     }
 }
 
@@ -117,6 +128,7 @@ void ClearEntities()
 {
     for (int i = 0; i <  EntityCount; ++i)
     {
+        b2DestroyBody(Entities[i]->body);
         delete Entities[i];
     }
 
@@ -127,12 +139,18 @@ Platform *CreatePlatform()
 {
     Platform *platform = new Platform();
 
-    platform->body.mass = FLT_MAX;
+    if (AddPlatform(platform)) 
+    {
 
-    if (AddPlatform(platform))
+        b2BodyDef bodyDef = b2DefaultBodyDef();
+
+        platform->body = b2CreateBody(MainWorld, &bodyDef);
+
         return platform;
+    }
 
     delete platform;
+
     return nullptr;
 }
 
@@ -140,13 +158,19 @@ Platform *CreatePlatform(Vector2 size, Vector2 position)
 {
     Platform *platform = new Platform();
 
-    platform->body.Set(size, FLT_MAX);
-    platform->body.position = position;
-
     if (AddPlatform(platform))
+    {
+
+        b2BodyDef bodyDef = b2DefaultBodyDef();
+        bodyDef.position = position;
+
+        platform->body = b2CreateBody(MainWorld, &bodyDef);
+
         return platform;
+    }
 
     delete platform;
+
     return nullptr;
 }
 
@@ -157,8 +181,6 @@ bool AddPlatform(Platform *platform)
         TraceLog(LOG_WARNING, "Not enough space for more platforms!");
         return false;
     }
-
-    MainWorld.Add(&platform->body);
 
     Platforms[PlatformCount] = platform;
     PlatformCount++;
@@ -173,7 +195,7 @@ void RemovePlatform(Platform *platform)
         if (Platforms[i] != platform) 
             continue;
 
-        MainWorld.Remove(&platform->body);
+        b2DestroyBody(platform->body);
 
         delete Platforms[i];
         PlatformCount--;
@@ -187,6 +209,7 @@ void ClearPlatforms()
 {
     for (int i = 0; i <  PlatformCount; ++i)
     {
+        b2DestroyBody(Platforms[i]->body);
         delete Platforms[i];
     }
 

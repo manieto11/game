@@ -2,32 +2,30 @@
 #include "settings.h"
 #include "textures.h"
 
-Entity::Entity() : body(), texture(&DefaultTexture)
+Entity::Entity() : body(), texture(&DefaultTexture), size({1.0f, 1.0f})
 {
     textureSource.x = 0.0f;
     textureSource.y = 0.0f;
     textureSource.width = 32.0f;
     textureSource.height = 32.0f;
-
-    body.Set({1.0f, 1.0f}, 1.0f);
-    body.friction = 0;
 }
 
 void DrawEntity(Entity *entity)
 {
-    Vector2 offset = PIXELS_PER_UNIT / 2.0f * entity->body.width;
+    Vector2 position = b2Body_GetPosition(entity->body);
+    Vector2 offset = PIXELS_PER_UNIT / 2.0f * entity->size;
 
-    Rectangle destination = {entity->body.position.x * PIXELS_PER_UNIT, -entity->body.position.y * PIXELS_PER_UNIT, entity->body.width.x * PIXELS_PER_UNIT, entity->body.width.y * PIXELS_PER_UNIT};
+    Rectangle destination = {position.x * PIXELS_PER_UNIT, -position.y * PIXELS_PER_UNIT, entity->size.x * PIXELS_PER_UNIT, entity->size.y * PIXELS_PER_UNIT};
 
     //TraceLog(LOG_INFO, "Painting entity at {%.1f, %.1f}", destination.x, destination.y);
 
-    DrawTexturePro(*entity->texture, entity->textureSource, destination, offset, - RAD2DEG * entity->body.rotation, WHITE);
+    DrawTexturePro(*entity->texture, entity->textureSource, destination, offset, - RAD2DEG, WHITE);
 }
 
 void DrawEntityBorder(Entity *entity)
 {
-    Vector2 offset = PIXELS_PER_UNIT / 2.0f * entity->body.width,
-        center = PIXELS_PER_UNIT * entity->body.position;
+    Vector2 offset = PIXELS_PER_UNIT / 2.0f * entity->size,
+        center = PIXELS_PER_UNIT * b2Body_GetPosition(entity->body);
 
     center.y = -center.y;
 
