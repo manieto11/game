@@ -10,6 +10,7 @@ Entity::Entity() : body(), texture(&DefaultTexture)
     textureSource.height = 32.0f;
 
     body.Set({1.0f, 1.0f}, 1.0f);
+    body.friction = 0;
 }
 
 void DrawEntity(Entity *entity)

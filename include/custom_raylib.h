@@ -213,7 +213,7 @@
 #endif
 
 // Vector2, 2 components
-typedef struct Vec2 Vector2;
+typedef Vec2 Vector2;
 
 // Vector3, 3 components
 typedef struct Vector3 {

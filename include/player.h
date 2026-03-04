@@ -2,10 +2,10 @@
 #define PLAYER_H
 
 #include "entity.h"
-#include "custom_raylib.h"
+#include "platform.h"
 
 extern Entity *PlayerEntity;
 
-void UpdatePlayer();
+void UpdatePlayer(Platform** platforms, int platformCount);
 
 #endif
