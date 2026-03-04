@@ -25,6 +25,8 @@
 
 #define DEFAULT_GRID_SCALE 1.0f 
 
+#define DEBUG 1
+
 // Configurable parameters
 
 inline int screenWidth = 800, 

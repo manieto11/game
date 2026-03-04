@@ -37,9 +37,13 @@ int main()
         DrawGame();
         EndMode2D();
 
+#if DEBUG
+
         DrawLine(0, screenHeight / 2, screenWidth, screenHeight / 2, LIME);
         DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, LIME);
         DrawFPS(10, 10);
+
+#endif
 
         EndDrawing();
     }

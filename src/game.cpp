@@ -12,7 +12,7 @@ int PlatformCount = 0;
 
 void InitGame()
 {
-    // SetTraceLogLevel(LOG_WARNING);
+    SetTraceLogLevel(LOG_WARNING);
 
     InitWindow(screenWidth, screenHeight, GAME_TITLE " " VERSION);
     if (fullscreen)
@@ -47,11 +47,16 @@ void DrawGame()
 {
     for (int i = 0; i < EntityCount; i++) {
         DrawEntity(Entities[i]);
+#if DEBUG
+        DrawEntityBorder(Entities[i]);
+#endif
     }
 
+#if DEBUG
     for (int i = 0; i < PlatformCount; i++) {
         DrawPlatformBorders(Platforms[i]);
     }
+#endif
 }
 
 void FinishGame()
