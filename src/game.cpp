@@ -96,6 +96,11 @@ Entity *CreateEntity()
 
         entity->body = b2CreateBody(MainWorld, &bodyDef);
 
+        b2Polygon entityBox = b2MakeBox(entity->size.x / 2.0f, entity->size.y / 2.0f);
+        b2ShapeDef shapeDef = b2DefaultShapeDef();
+        shapeDef.material.friction = 0.0f;
+        b2CreatePolygonShape(entity->body, &shapeDef, &entityBox);
+
         return entity;
     }
 
@@ -157,6 +162,11 @@ Platform *CreatePlatform()
 
         platform->body = b2CreateBody(MainWorld, &bodyDef);
 
+        b2Polygon groundBox = b2MakeBox(0.5f, 0.5f);
+        b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+        groundShapeDef.material.friction = 0.0f;
+        b2CreatePolygonShape(platform->body, &groundShapeDef, &groundBox);
+
         return platform;
     }
 
@@ -175,10 +185,9 @@ Platform *CreatePlatform(Vector2 size, Vector2 position)
         b2BodyDef bodyDef = b2DefaultBodyDef();
         bodyDef.position = position;
 
-        b2Polygon groundBox = b2MakeBox(size.x / 2.0f, size.y / 2.0f);
-
         platform->body = b2CreateBody(MainWorld, &bodyDef);
 
+        b2Polygon groundBox = b2MakeBox(size.x / 2.0f, size.y / 2.0f);
         b2ShapeDef groundShapeDef = b2DefaultShapeDef();
         b2CreatePolygonShape(platform->body, &groundShapeDef, &groundBox);
 

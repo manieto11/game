@@ -23,7 +23,7 @@
 // Time for the player in seconds to jump after falling of an edge
 #define PLAYER_COYOTE_TIME 0.2f
 // Time for the player to be able to jump again
-#define PLAYER_DOUBLE_JUMP_DELAY 0.5f
+#define PLAYER_DOUBLE_JUMP_DELAY 0.2f
 
 // Set to 0 to hide debug information, set to 1 otherwise to show it
 #define DEBUG 1
