@@ -9,8 +9,15 @@ void DrawPlatformBorders(const Platform* platform)
 
     center.y = -center.y;
 
-    DrawLine(center.x + offset.x, center.y + offset.y, center.x - offset.x, center.y + offset.y, DARKBLUE);
-    DrawLine(center.x + offset.x, center.y - offset.y, center.x - offset.x, center.y - offset.y, DARKBLUE);
-    DrawLine(center.x + offset.x, center.y + offset.y, center.x + offset.x, center.y - offset.y, DARKBLUE);
-    DrawLine(center.x - offset.x, center.y + offset.y, center.x - offset.x, center.y - offset.y, DARKBLUE);
+    DrawRectangleLines(center.x - offset.x, center.y - offset.y, platform->size.x * PIXELS_PER_UNIT, platform->size.y * PIXELS_PER_UNIT, DARKBLUE);
+}
+
+Platform::Platform() : size({1.0f, 1.0f})
+{
+
+}
+
+Platform::Platform(Vector2 size) : size(size)
+{
+    
 }

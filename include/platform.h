@@ -7,7 +7,10 @@
 struct Platform
 {
     b2BodyId body;
-	Vector2 size;
+	const Vector2 size;
+
+	Platform();
+	Platform(Vector2 size);
 };
 
 void DrawPlatformBorders(const Platform* platform);

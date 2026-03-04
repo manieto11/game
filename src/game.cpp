@@ -12,7 +12,7 @@ int PlatformCount = 0;
 
 void InitGame()
 {
-    SetTraceLogLevel(LOG_WARNING);
+    //SetTraceLogLevel(LOG_WARNING);
 
     InitWindow(screenWidth, screenHeight, GAME_TITLE " " VERSION);
     if (fullscreen)
@@ -82,6 +82,17 @@ Entity *CreateEntity()
 
         b2BodyDef bodyDef = b2DefaultBodyDef();
         bodyDef.type = b2_dynamicBody;
+        bodyDef.gravityScale = 1.0f;
+        
+        b2MotionLocks motionLocks;
+        motionLocks.linearX = false;
+        motionLocks.linearY = false;
+        motionLocks.angularZ = true;
+
+        bodyDef.motionLocks = motionLocks;
+
+        bodyDef.isEnabled = true;
+        bodyDef.isAwake = true;
 
         entity->body = b2CreateBody(MainWorld, &bodyDef);
 
@@ -156,7 +167,7 @@ Platform *CreatePlatform()
 
 Platform *CreatePlatform(Vector2 size, Vector2 position)
 {
-    Platform *platform = new Platform();
+    Platform *platform = new Platform(size);
 
     if (AddPlatform(platform))
     {
@@ -164,7 +175,12 @@ Platform *CreatePlatform(Vector2 size, Vector2 position)
         b2BodyDef bodyDef = b2DefaultBodyDef();
         bodyDef.position = position;
 
+        b2Polygon groundBox = b2MakeBox(size.x / 2.0f, size.y / 2.0f);
+
         platform->body = b2CreateBody(MainWorld, &bodyDef);
+
+        b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+        b2CreatePolygonShape(platform->body, &groundShapeDef, &groundBox);
 
         return platform;
     }

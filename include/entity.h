@@ -12,6 +12,7 @@ struct Entity
 	const Vector2 size;
 
 	Entity();
+	Entity(Vector2 size);
 };
 
 // Draw the entity

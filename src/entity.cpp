@@ -10,6 +10,14 @@ Entity::Entity() : body(), texture(&DefaultTexture), size({1.0f, 1.0f})
     textureSource.height = 32.0f;
 }
 
+Entity::Entity(Vector2 size) : size(size)
+{
+    textureSource.x = 0.0f;
+    textureSource.y = 0.0f;
+    textureSource.width = 32.0f;
+    textureSource.height = 32.0f;
+}
+
 void DrawEntity(Entity *entity)
 {
     Vector2 position = b2Body_GetPosition(entity->body);
@@ -19,7 +27,7 @@ void DrawEntity(Entity *entity)
 
     //TraceLog(LOG_INFO, "Painting entity at {%.1f, %.1f}", destination.x, destination.y);
 
-    DrawTexturePro(*entity->texture, entity->textureSource, destination, offset, - RAD2DEG, WHITE);
+    DrawTexturePro(*entity->texture, entity->textureSource, destination, offset, 0.0f, WHITE);
 }
 
 void DrawEntityBorder(Entity *entity)
@@ -28,9 +36,6 @@ void DrawEntityBorder(Entity *entity)
         center = PIXELS_PER_UNIT * b2Body_GetPosition(entity->body);
 
     center.y = -center.y;
-
-    DrawLine(center.x + offset.x, center.y + offset.y, center.x - offset.x, center.y + offset.y, LIME);
-    DrawLine(center.x + offset.x, center.y - offset.y, center.x - offset.x, center.y - offset.y, LIME);
-    DrawLine(center.x + offset.x, center.y + offset.y, center.x + offset.x, center.y - offset.y, LIME);
-    DrawLine(center.x - offset.x, center.y + offset.y, center.x - offset.x, center.y - offset.y, LIME);
+    
+    DrawRectangleLines(center.x - offset.x, center.y - offset.y, entity->size.x * PIXELS_PER_UNIT, entity->size.y * PIXELS_PER_UNIT, LIME);
 }

@@ -85,5 +85,5 @@ void UpdatePlayer(Platform** platforms, int platformCount)
 
     SetRange(movingX, -PLAYER_SPEED, PLAYER_SPEED);
 
-    velocity.x = movingX;
+    b2Body_SetLinearVelocity(PlayerEntity->body, {movingX, velocity.y});
 }
