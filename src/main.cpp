@@ -32,9 +32,9 @@ int main()
         
         ClearBackground(SKYBLUE);
 
-        BeginMode2D(MainCamera);
+        BeginMode3D(MainCamera);
         DrawGame();
-        EndMode2D();
+        EndMode3D();
 
 #if DEBUG
 

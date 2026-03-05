@@ -3,7 +3,7 @@
 #include "settings.h"
 #include "textures.h"
 
-Camera2D MainCamera;
+Camera MainCamera;
 b2WorldId MainWorld;
 Entity *Entities[MAX_ENTITIES] = {nullptr};
 int EntityCount = 0;
@@ -12,7 +12,7 @@ int PlatformCount = 0;
 
 void InitGame()
 {
-    //SetTraceLogLevel(LOG_WARNING);
+    // SetTraceLogLevel(LOG_WARNING);
 
     InitWindow(screenWidth, screenHeight, GAME_TITLE " " VERSION);
     if (fullscreen)
@@ -23,13 +23,14 @@ void InitGame()
     LoadSettings();
     LoadGameTextures();
 
-    MainCamera.offset = {screenWidth / 2.0f, screenHeight / 2.0f};
-    MainCamera.rotation = 0;
-    MainCamera.target = {0, 0};
-    MainCamera.zoom = scaleMultiplier;
+    MainCamera.position = {0.0f, 0.0f, -10.0f};
+    MainCamera.target = {0.0f, 0.0f, 0.0f};
+    MainCamera.up = {0.0f, -1.0f, 0.0f};
+    MainCamera.fovy = 16.0f * PIXELS_PER_UNIT;
+    MainCamera.projection = CAMERA_ORTHOGRAPHIC;
 
     b2WorldDef worldDef = b2DefaultWorldDef();
-    worldDef.gravity = {0.0f, - GAME_GRAVITY};
+    worldDef.gravity = {0.0f, -GAME_GRAVITY};
 
     MainWorld = b2CreateWorld(&worldDef);
 
@@ -51,7 +52,8 @@ void FixedUpdateGame()
 
 void DrawGame()
 {
-    for (int i = 0; i < EntityCount; i++) {
+    for (int i = 0; i < EntityCount; i++)
+    {
         DrawEntity(Entities[i]);
 #if DEBUG
         DrawEntityBorder(Entities[i]);
@@ -59,7 +61,8 @@ void DrawGame()
     }
 
 #if DEBUG
-    for (int i = 0; i < PlatformCount; i++) {
+    for (int i = 0; i < PlatformCount; i++)
+    {
         DrawPlatformBorders(Platforms[i]);
     }
 #endif
@@ -77,13 +80,13 @@ Entity *CreateEntity()
 {
     Entity *entity = new Entity();
 
-    if (AddEntity(entity)) 
+    if (AddEntity(entity))
     {
 
         b2BodyDef bodyDef = b2DefaultBodyDef();
         bodyDef.type = b2_dynamicBody;
         bodyDef.gravityScale = 1.0f;
-        
+
         b2MotionLocks motionLocks;
         motionLocks.linearX = false;
         motionLocks.linearY = false;
@@ -111,7 +114,7 @@ Entity *CreateEntity()
 
 bool AddEntity(Entity *entity)
 {
-    if (EntityCount >= MAX_ENTITIES) 
+    if (EntityCount >= MAX_ENTITIES)
     {
         TraceLog(LOG_WARNING, "Not enough space for more entities!");
         return false;
@@ -125,9 +128,9 @@ bool AddEntity(Entity *entity)
 
 void RemoveEntity(Entity *entity)
 {
-    for (int i = 0; i <  EntityCount; ++i)
+    for (int i = 0; i < EntityCount; ++i)
     {
-        if (Entities[i] != entity) 
+        if (Entities[i] != entity)
             continue;
 
         b2DestroyBody(entity->body);
@@ -142,7 +145,7 @@ void RemoveEntity(Entity *entity)
 
 void ClearEntities()
 {
-    for (int i = 0; i <  EntityCount; ++i)
+    for (int i = 0; i < EntityCount; ++i)
     {
         b2DestroyBody(Entities[i]->body);
         delete Entities[i];
@@ -155,7 +158,7 @@ Platform *CreatePlatform()
 {
     Platform *platform = new Platform();
 
-    if (AddPlatform(platform)) 
+    if (AddPlatform(platform))
     {
 
         b2BodyDef bodyDef = b2DefaultBodyDef();
@@ -201,7 +204,7 @@ Platform *CreatePlatform(Vector2 size, Vector2 position)
 
 bool AddPlatform(Platform *platform)
 {
-    if (PlatformCount >= MAX_PLATFORMS) 
+    if (PlatformCount >= MAX_PLATFORMS)
     {
         TraceLog(LOG_WARNING, "Not enough space for more platforms!");
         return false;
@@ -215,9 +218,9 @@ bool AddPlatform(Platform *platform)
 
 void RemovePlatform(Platform *platform)
 {
-    for (int i = 0; i <  PlatformCount; ++i)
+    for (int i = 0; i < PlatformCount; ++i)
     {
-        if (Platforms[i] != platform) 
+        if (Platforms[i] != platform)
             continue;
 
         b2DestroyBody(platform->body);
@@ -232,7 +235,7 @@ void RemovePlatform(Platform *platform)
 
 void ClearPlatforms()
 {
-    for (int i = 0; i <  PlatformCount; ++i)
+    for (int i = 0; i < PlatformCount; ++i)
     {
         b2DestroyBody(Platforms[i]->body);
         delete Platforms[i];
