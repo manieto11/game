@@ -20,10 +20,10 @@ BOX_O = $(patsubst $(BOX_DIR)/%.c,$(OBJ_DIR)/%.a,$(BOX_S))
 CXXFLAGS = -O2
 LDFLAGS  = -Wl,-rpath,'$$ORIGIN'
 
-CFLAGS = -O2 -std=c99
+CFLAGS = -O2 -std=gnu11
 
 # C-specific flags
-C_EXTRA_FLAGS =
+C_EXTRA_FLAGS = 
 
 # ---------------- Libraries ----------------
 LIBS     = -lraylib -lsteam_api
@@ -33,9 +33,9 @@ RUNTIME_LIBS = steam/libsteam_api.so
 # ---------------- Targets ----------------
 all: game
 
-game: $(OBJS)
+game: $(OBJS) $(BOX_O)
 	@mkdir -p $(BUILD_DIR)
-	$(CXX) $(OBJS) box2D.o $(LDFLAGS) $(LIBDIRS) $(LIBS) -o $(BUILD_DIR)/game.AppImage
+	$(CXX) $(OBJS) $(BOX_O) $(LDFLAGS) $(LIBDIRS) $(LIBS) -o $(BUILD_DIR)/game.AppImage
 	@for f in $(RUNTIME_LIBS); do \
 		if [ -f "$$f" ]; then cp -f "$$f" $(BUILD_DIR)/; fi; \
 	done
@@ -47,7 +47,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 $(OBJ_DIR)/%.a: $(BOX_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(C_EXTRA_FLAGS) $(INCL_DIRS) -c $< -o $@
+	$(CC) $(CFLAGS) $(C_EXTRA_FLAGS) -I$(INC_DIR) -c $< -o $@
 
 # ---------------- Utilities ----------------
 clean:
