@@ -1,22 +1,26 @@
 #include "player.h"
+#include "materials.h"
+#include "meshes.h"
+#include "raymath.h"
 #include "settings.h"
-#include "game_utils.h"
 
 Entity *PlayerEntity;
 float elapsedCoyoteTime, elapsedJumpTime;
 bool doubleJump;
+Vector2 playerPosition;
 
 bool IsGrounded(Platform** platforms, int platformCount)
 {
     for (int i = 0; i < platformCount; ++i)
     {
-        Vector2 platformPosition = b2Body_GetPosition(platforms[i]->body), offset = 0.5f * platforms[i]->size, topRight = platformPosition + offset, bottomLeft = platformPosition - offset;
+        Vector2 platformPosition = b2Body_GetPosition(platforms[i]->body), offset = 0.5f * platforms[i]->size;
+        Rectangle platformRect = {platformPosition.x - offset.x, platformPosition.y - offset.y, platforms[i]->size.x, platforms[i]->size.y};
         float playerOffsetX = 0.45f * PlayerEntity->size.x, playerOffsetY = 0.5f * PlayerEntity->size.y;
-        Vector2 playerPosition = b2Body_GetPosition(PlayerEntity->body), offsetCenter = {playerPosition.x, playerPosition.y - playerOffsetY}, offsetLeft = {playerPosition.x - playerOffsetX, playerPosition.y - playerOffsetY}, offsetRight = {playerPosition.x + playerOffsetX, playerPosition.y - playerOffsetY};
+        Vector2 offsetCenter = {playerPosition.x, playerPosition.y - playerOffsetY}, offsetLeft = {playerPosition.x - playerOffsetX, playerPosition.y - playerOffsetY}, offsetRight = {playerPosition.x + playerOffsetX, playerPosition.y - playerOffsetY};
 
-        if (PointInsideBox(topRight, bottomLeft, offsetCenter) || 
-            PointInsideBox(topRight, bottomLeft, offsetLeft) ||
-            PointInsideBox(topRight, bottomLeft, offsetRight))
+        if (CheckCollisionPointRec(offsetCenter, platformRect) || 
+            CheckCollisionPointRec(offsetLeft, platformRect) ||
+            CheckCollisionPointRec(offsetRight, platformRect))
                 return true;
     }
 
@@ -31,10 +35,18 @@ void Jump()
     b2Body_SetLinearVelocity(PlayerEntity->body, {b2Body_GetLinearVelocity(PlayerEntity->body).x, 7.0f});
 }
 
-void UpdatePlayer(Platform** platforms, int platformCount)
+void DrawPlayer()
 {
-    if (PlayerEntity == nullptr)
+    Matrix bodyTransform = MatrixTranslate(playerPosition.x, playerPosition.y, 0.0f) * MatrixIdentity(); //MatrixTranslate(playerPosition.x, playerPosition.y, 0.0f) * MatrixRotateZ(1.57f);
+    DrawMesh(PlayerBodyMesh, PlayerMaterial, bodyTransform);
+}
+
+void UpdatePlayer(Platform **platforms, int platformCount)
+{
+    if (PlayerEntity == nullptr || !b2Body_IsValid(PlayerEntity->body))
         return;
+
+    playerPosition = b2Body_GetPosition(PlayerEntity->body);
 
     bool grounded = IsGrounded(platforms, platformCount);
 
@@ -83,7 +95,7 @@ void UpdatePlayer(Platform** platforms, int platformCount)
         else
             movingX = velocity.x > 0.0f ? (velocity.x - PLAYER_AIR_ACCELERATION / 2.0f) : (velocity.x + PLAYER_AIR_ACCELERATION / 2.0f);
 
-    SetRange(movingX, -PLAYER_SPEED, PLAYER_SPEED);
+    Wrap(movingX, -PLAYER_SPEED, PLAYER_SPEED);
 
     b2Body_SetLinearVelocity(PlayerEntity->body, {movingX, velocity.y});
 }

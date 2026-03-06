@@ -6,6 +6,8 @@
 
 extern Entity *PlayerEntity;
 
+void InitPlayer();
+void DrawPlayer();
 void UpdatePlayer(Platform** platforms, int platformCount);
 
 #endif

@@ -4,7 +4,7 @@
 #include "box2d/box2d.h"
 #include "entity.h"
 #include "platform.h"
-#include "custom_raylib.h"
+#include "raylib.h"
 
 #define MAX_ENTITIES 128
 #define MAX_PLATFORMS 128

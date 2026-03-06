@@ -2,7 +2,7 @@
 #define SETTINGS_H
 
 #include "box2d/box2d.h"
-#include "custom_raylib.h"
+#include "raylib.h"
 
 // Title of the game's window
 #define GAME_TITLE "game"

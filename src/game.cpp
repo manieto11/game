@@ -1,4 +1,6 @@
 #include "game.h"
+#include "materials.h"
+#include "meshes.h"
 #include "player.h"
 #include "settings.h"
 #include "textures.h"
@@ -22,6 +24,8 @@ void InitGame()
 
     LoadSettings();
     LoadGameTextures();
+    LoadGameMaterials();
+    LoadGameMeshes();
 
     MainCamera.position = {0.0f, 0.0f, -10.0f};
     MainCamera.target = {0.0f, 0.0f, 0.0f};
@@ -54,10 +58,13 @@ void DrawGame()
 {
     for (int i = 0; i < EntityCount; i++)
     {
-        DrawEntity(Entities[i]);
 #if DEBUG
         DrawEntityBorder(Entities[i]);
 #endif
+
+        if (Entities[i] == PlayerEntity) continue;
+
+        DrawEntity(Entities[i]);
     }
 
 #if DEBUG
@@ -66,6 +73,8 @@ void DrawGame()
         DrawPlatformBorders(Platforms[i]);
     }
 #endif
+
+    DrawPlayer();
 }
 
 void FinishGame()
@@ -74,6 +83,9 @@ void FinishGame()
     ClearPlatforms();
 
     b2DestroyWorld(MainWorld);
+
+    UnloadGameMaterials();
+    UnloadGameTextures();
 }
 
 Entity *CreateEntity()

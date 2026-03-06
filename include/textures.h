@@ -4,9 +4,10 @@
 #include "raylib.h"
 
 extern Texture2D DefaultTexture;
-extern Texture2D DefaultGridTexture;
 
+// Load game textures. Call UnloadGameTextures before ending execution
 void LoadGameTextures();
+// Unload game textures
 void UnloadGameTextures();
 
 #endif

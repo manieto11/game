@@ -8,6 +8,8 @@
 
 #include <float.h>
 #include <math.h>
+#include "raylib.h"
+#include "raymath.h"
 #include <stdbool.h>
 
 /**
@@ -18,11 +20,7 @@
 
 /// 2D vector
 /// This can be used to represent a point or free vector
-typedef struct b2Vec2
-{
-	/// coordinates
-	float x, y;
-} b2Vec2;
+typedef Vector2 b2Vec2;
 
 /// Cosine and sine pair
 /// This uses a custom implementation designed for cross-platform determinism
@@ -736,17 +734,17 @@ inline b2Vec2 operator-( b2Vec2 a )
 	return { -a.x, -a.y };
 }
 
-/// Binary vector addition
+/*/// Binary vector addition
 inline b2Vec2 operator+( b2Vec2 a, b2Vec2 b )
 {
 	return { a.x + b.x, a.y + b.y };
-}
+}*/
 
-/// Binary vector subtraction
+/*/// Binary vector subtraction
 inline b2Vec2 operator-( b2Vec2 a, b2Vec2 b )
 {
 	return { a.x - b.x, a.y - b.y };
-}
+}*/
 
 /// Binary scalar and vector multiplication
 inline b2Vec2 operator*( float a, b2Vec2 b )

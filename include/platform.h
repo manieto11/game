@@ -2,7 +2,7 @@
 #define PLATFORM_H
 
 #include "box2d/box2d.h"
-#include "custom_raylib.h"
+#include "raylib.h"
 
 struct Platform
 {

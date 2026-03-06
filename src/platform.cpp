@@ -1,5 +1,5 @@
 #include "platform.h"
-#include "custom_raylib.h"
+#include "raylib.h"
 #include "settings.h"
 
 void DrawPlatformBorders(const Platform* platform)

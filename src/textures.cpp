@@ -2,7 +2,6 @@
 #include "settings.h"
 
 Texture2D DefaultTexture;
-Texture2D DefaultGridTexture;
 
 void LoadGameTextures()
 {

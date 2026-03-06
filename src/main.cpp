@@ -1,5 +1,5 @@
 #include "game.h"
-#include "custom_raylib.h"
+#include "raylib.h"
 #include "settings.h"
 #include "steam/steam_api.h"
 
