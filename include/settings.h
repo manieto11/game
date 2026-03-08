@@ -17,7 +17,9 @@
 // The default gamepad of the player
 #define PLAYER_GAMEPAD 0
 // The player's speed on the ground
-#define PLAYER_SPEED 5.0f * speedMultiplier
+#define PLAYER_SPEED 7.0f * speedMultiplier
+// The player's jump force
+#define PLAYER_JUMP_FORCE 7.0f * jumpMultiplier
 // The player's acceleration in the air
 #define PLAYER_AIR_ACCELERATION 10.0f * speedMultiplier * GetFrameTime()
 // Time for the player in seconds to jump after falling of an edge
@@ -37,6 +39,8 @@ inline int screenHeight = 600;
 inline float scaleMultiplier = 1.0f;
 // A multiplier for the player speed
 inline float speedMultiplier = 1.0f;
+// A multiplier for the player jump
+inline float jumpMultiplier = 1.0f;
 
 // True if Steam is working
 inline bool steamEnabled = false;

@@ -5,9 +5,23 @@
 #include "settings.h"
 
 Entity *PlayerEntity;
-float elapsedCoyoteTime, elapsedJumpTime;
-bool doubleJump;
-Vector2 playerPosition;
+float elapsedCoyoteTime, elapsedJumpTime, step = 0.0f, bodyRotation;
+bool doubleJump, grounded;
+Vector2 playerPosition, playerVelocity, bodyPos, leftLegPos, rightLegPos;
+
+void UpdatePlayerAnimation()
+{
+    if (grounded && fabs(playerVelocity.x) > 0.1f)
+    {
+        step += GetFrameTime() * speedMultiplier * 3.0f;
+        if (step > 1.0f) 
+            step -= 1.0f;
+    }
+    
+    bodyRotation = 10.0f * DEG2RAD * (playerVelocity.x / -(PLAYER_SPEED));
+    
+    bodyPos = {playerPosition.x, playerPosition.y + 0.05f * sinf(2.0f * step * PI)};
+}
 
 bool IsGrounded(Platform** platforms, int platformCount)
 {
@@ -32,13 +46,19 @@ void Jump()
     if (elapsedJumpTime != 0.0f)
         elapsedJumpTime = 0.0f;
 
-    b2Body_SetLinearVelocity(PlayerEntity->body, {b2Body_GetLinearVelocity(PlayerEntity->body).x, 7.0f});
+    b2Body_SetLinearVelocity(PlayerEntity->body, {b2Body_GetLinearVelocity(PlayerEntity->body).x, PLAYER_JUMP_FORCE});
 }
 
 void DrawPlayer()
 {
-    Matrix bodyTransform = MatrixScale(PIXELS_PER_UNIT, PIXELS_PER_UNIT, 1.0f) * MatrixTranslate(PIXELS_PER_UNIT * playerPosition.x, - PIXELS_PER_UNIT * playerPosition.y, 0.0f); //MatrixTranslate(playerPosition.x, playerPosition.y, 0.0f) * MatrixRotateZ(1.57f);
+    Matrix sizeMat = MatrixScale(PlayerEntity->size.x, PlayerEntity->size.x, 1.0f), 
+        bodyTransform = MatrixRotateZ(bodyRotation) * MatrixTranslate(PIXELS_PER_UNIT * bodyPos.x, - PIXELS_PER_UNIT * bodyPos.y, 0.0f) * sizeMat,
+        leftLegTransform  = MatrixTranslate(PIXELS_PER_UNIT * leftLegPos.x, - PIXELS_PER_UNIT * leftLegPos.y, 0.0f) * sizeMat,
+        rightLegTransform = MatrixTranslate(PIXELS_PER_UNIT * rightLegPos.x, - PIXELS_PER_UNIT * rightLegPos.y, 0.0f) * sizeMat;
+
     DrawMesh(PlayerBodyMesh, PlayerMaterial, bodyTransform);
+    DrawMesh(PlayerLegMesh, PlayerMaterial, leftLegTransform);
+    DrawMesh(PlayerLegMesh, PlayerMaterial, rightLegTransform);
 }
 
 void UpdatePlayer(Platform **platforms, int platformCount)
@@ -48,7 +68,10 @@ void UpdatePlayer(Platform **platforms, int platformCount)
 
     playerPosition = b2Body_GetPosition(PlayerEntity->body);
 
-    bool grounded = IsGrounded(platforms, platformCount);
+    grounded = IsGrounded(platforms, platformCount);
+    playerVelocity = b2Body_GetLinearVelocity(PlayerEntity->body);
+
+    UpdatePlayerAnimation();
 
     if (grounded) 
     {
@@ -69,9 +92,7 @@ void UpdatePlayer(Platform **platforms, int platformCount)
         Jump();
     }
 
-    Vector2 velocity = b2Body_GetLinearVelocity(PlayerEntity->body);
-
-    float movingX;
+    float movingX = grounded ? 0.0f : playerVelocity.x;
 
     if (IsGamepadAvailable(PLAYER_GAMEPAD))
     {
@@ -86,16 +107,16 @@ void UpdatePlayer(Platform **platforms, int platformCount)
             movingX = axisValue * PLAYER_SPEED;
     }
     else if ((IsKeyDown(movingLeftKey) || IsKeyDown(movingLeftKeySecondary)) && !(IsKeyDown(movingRightKey) || IsKeyDown(movingRightKeySecondary)))
-        movingX = grounded ? -PLAYER_SPEED : velocity.x - PLAYER_AIR_ACCELERATION;
+        movingX = grounded ? -PLAYER_SPEED : playerVelocity.x - PLAYER_AIR_ACCELERATION;
     else if (!(IsKeyDown(movingLeftKey) || IsKeyDown(movingLeftKeySecondary)) && (IsKeyDown(movingRightKey) || IsKeyDown(movingRightKeySecondary)))
-        movingX = grounded ? PLAYER_SPEED : velocity.x + PLAYER_AIR_ACCELERATION;
+        movingX = grounded ? PLAYER_SPEED : playerVelocity.x + PLAYER_AIR_ACCELERATION;
     else
-        if (grounded || velocity.x == 0.0f) 
+        if (grounded || playerVelocity.x == 0.0f) 
             movingX = 0.0f;
         else
-            movingX = velocity.x > 0.0f ? (velocity.x - PLAYER_AIR_ACCELERATION / 2.0f) : (velocity.x + PLAYER_AIR_ACCELERATION / 2.0f);
+            movingX = playerVelocity.x > 0.0f ? (playerVelocity.x - PLAYER_AIR_ACCELERATION / 2.0f) : (playerVelocity.x + PLAYER_AIR_ACCELERATION / 2.0f);
 
-    Wrap(movingX, -PLAYER_SPEED, PLAYER_SPEED);
+    movingX = Clamp(movingX, - PLAYER_SPEED, PLAYER_SPEED);
 
-    b2Body_SetLinearVelocity(PlayerEntity->body, {movingX, velocity.y});
+    b2Body_SetLinearVelocity(PlayerEntity->body, {movingX, playerVelocity.y});
 }

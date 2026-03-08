@@ -15,6 +15,17 @@ int main()
 
     while (!WindowShouldClose())
     {
+        if (IsKeyPressed(KEY_F11))
+        {
+            ToggleBorderlessWindowed();
+        }
+
+        if (IsWindowResized())
+        {
+            screenWidth = GetScreenWidth();
+            screenHeight = GetScreenHeight();
+        }
+
         if (steamEnabled)
             SteamAPI_RunCallbacks();
 

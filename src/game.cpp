@@ -16,13 +16,15 @@ void InitGame()
 {
     // SetTraceLogLevel(LOG_WARNING);
 
+    LoadSettings();
+
     InitWindow(screenWidth, screenHeight, GAME_TITLE " " VERSION);
+    SetWindowState(FLAG_WINDOW_RESIZABLE);
     if (fullscreen)
-        SetWindowState(FLAG_FULLSCREEN_MODE);
+        SetWindowState(FLAG_BORDERLESS_WINDOWED_MODE);
     SetExitKey(KEY_NULL);
     SetTargetFPS(60);
 
-    LoadSettings();
     LoadGameTextures();
     LoadGameMaterials();
     LoadGameMeshes();
