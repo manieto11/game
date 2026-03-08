@@ -8,6 +8,7 @@ BUILD_DIR = builds
 OBJ_DIR   = obj
 INC_DIR	  = ./include
 INC_DIR	 += ./box2D/include
+INC_DIR	 += ./SteamworksSDK/public
 BOX_DIR	  = ./box2D/src
 
 # ---------------- Files ----------------
@@ -28,8 +29,8 @@ C_EXTRA_FLAGS =
 
 # ---------------- Libraries ----------------
 LIBS     = -lraylib -lsteam_api
-LIBDIRS  = -L. -L./steam
-RUNTIME_LIBS = steam/libsteam_api.so
+LIBDIRS  = -L. -L./SteamworksSDK/redistributable_bin/linux64
+RUNTIME_LIBS = ./SteamworksSDK/redistributable_bin/linux64/libsteam_api.so
 
 # ---------------- Targets ----------------
 all: game

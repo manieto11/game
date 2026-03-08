@@ -9,7 +9,7 @@ CC  = x86_64-w64-mingw32-gcc
 SRC_DIR   	= ./src
 BUILD_DIR 	= builds
 OBJ_DIR   	= obj
-BOX_DIR		= ./box2D-src
+BOX_DIR		= ./box2D/src
 
 # ---------------- Files ----------------
 SRCS 		= $(wildcard $(SRC_DIR)/*.cpp)
@@ -22,15 +22,15 @@ BOX_O 		= $(patsubst $(BOX_DIR)/%.c,$(OBJ_DIR)/%.a,$(BOX_S))
 CXXFLAGS 	= -O2 -std=c++17
 CFLAGS		= -O2 -std=c99
 
-# Raylib paths
+# Raylib path
 INCL_DIRS	= -IC:/raylib/src
 
-# Steam SDK path (download from https://partner.steamgames.com/downloads/steamworks_sdk.zip)
-# Uncomment and set correct path after downloading:
-INCL_DIRS	+= -IC:/steamworks/sdk/public
+# Steam SDK path
+INCL_DIRS	+= -I./SteamworksSDK/public
 
 # Include header files
 INCL_DIRS	+= -I./include
+INCL_DIRS	+= -I./box2D/include
 INCL_DIRS	+= -IC:/ProgramData/mingw64/mingw64/lib/gcc/x86_64-w64-mingw32/13.2.0/include
 INCL_DIRS	+= -IC:/ProgramData/mingw64/mingw64/x86_64-w64-mingw32/include
 
@@ -39,7 +39,7 @@ C_EXTRA_FLAGS =
 
 # ---------------- Libraries ----------------
 LIBS 		= -lraylib -lsteam_api64 -lopengl32 -lgdi32 -lwinmm -luser32 -lkernel32 -lshell32 -lws2_32
-LIBDIRS 	= -L. -L./steam -LC:/raylib/src
+LIBDIRS 	= -L. -L./SteamworksSDK/redistributable_bin/win64 -LC:/raylib/src
 
 # ---------------- Target ----------------
 all: game
@@ -47,7 +47,7 @@ all: game
 game: $(OBJS) $(BOX_O)
 	@if not exist "$(BUILD_DIR)" mkdir "$(BUILD_DIR)"
 	$(CXX) $(OBJS) $(BOX_O) $(LIBDIRS) $(LIBS) -o $(BUILD_DIR)\game.exe
-	@if exist steam\steam_api64.dll copy /Y steam\steam_api64.dll $(BUILD_DIR)\ >nul
+	@if exist ".\SteamworksSDK\redistributable_bin\win64\steam_api64.dll" copy /y ".\SteamworksSDK\redistributable_bin\win64\steam_api64.dll" "$(BUILD_DIR)\steam_api64.dll"
 	@if not exist $(BUILD_DIR)\steam_appid.txt echo 480 > $(BUILD_DIR)\steam_appid.txt
 	@echo Build complete: $(BUILD_DIR)\game.exe
 
