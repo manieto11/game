@@ -37,7 +37,7 @@ void Jump()
 
 void DrawPlayer()
 {
-    Matrix bodyTransform = MatrixTranslate(playerPosition.x, playerPosition.y, 0.0f) * MatrixIdentity(); //MatrixTranslate(playerPosition.x, playerPosition.y, 0.0f) * MatrixRotateZ(1.57f);
+    Matrix bodyTransform = MatrixScale(PIXELS_PER_UNIT, PIXELS_PER_UNIT, 1.0f) * MatrixTranslate(PIXELS_PER_UNIT * playerPosition.x, - PIXELS_PER_UNIT * playerPosition.y, 0.0f); //MatrixTranslate(playerPosition.x, playerPosition.y, 0.0f) * MatrixRotateZ(1.57f);
     DrawMesh(PlayerBodyMesh, PlayerMaterial, bodyTransform);
 }
 
