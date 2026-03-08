@@ -7,7 +7,8 @@ SRC_DIR   = ./src
 BUILD_DIR = builds
 OBJ_DIR   = obj
 INC_DIR	  = ./include
-BOX_DIR	  = ./box2D-src
+INC_DIR	 += ./box2D/include
+BOX_DIR	  = ./box2D/src
 
 # ---------------- Files ----------------
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)

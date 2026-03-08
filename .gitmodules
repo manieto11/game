@@ -1,0 +1,6 @@
+[submodule "box2d"]
+	path = box2d
+	url = https://github.com/erincatto/box2d
+[submodule "SteamworksSDK"]
+	path = SteamworksSDK
+	url = https://github.com/rlabrecque/SteamworksSDK
