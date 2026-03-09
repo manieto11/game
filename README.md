@@ -13,6 +13,7 @@ The main goal of this project is to create a complete 2D platformer game that wi
 
 ## Tech Stack
 
+- box2d
 - C++
 - raylib
 - Steamworks API integration

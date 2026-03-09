@@ -4,7 +4,7 @@
 
 void DrawPlatformBorders(const Platform* platform)
 {
-    Vector2 offset = PIXELS_PER_UNIT / 2.0f * platform->size,
+    b2Vec2 offset = PIXELS_PER_UNIT / 2.0f * platform->size,
         center = PIXELS_PER_UNIT * b2Body_GetPosition(platform->body);
 
     center.y = -center.y;
@@ -17,7 +17,7 @@ Platform::Platform() : size({1.0f, 1.0f})
 
 }
 
-Platform::Platform(Vector2 size) : size(size)
+Platform::Platform(b2Vec2 size) : size(size)
 {
     
 }

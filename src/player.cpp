@@ -7,7 +7,7 @@
 Entity *PlayerEntity;
 float elapsedCoyoteTime, elapsedJumpTime, step = 0.0f, bodyRotation;
 bool doubleJump, grounded;
-Vector2 playerPosition, playerVelocity, bodyPos, leftLegPos, rightLegPos;
+b2Vec2 playerPosition, playerVelocity, bodyPos, leftLegPos, rightLegPos;
 
 void UpdatePlayerAnimation()
 {
@@ -27,7 +27,7 @@ bool IsGrounded(Platform** platforms, int platformCount)
 {
     for (int i = 0; i < platformCount; ++i)
     {
-        Vector2 platformPosition = b2Body_GetPosition(platforms[i]->body), offset = 0.5f * platforms[i]->size;
+        b2Vec2 platformPosition = b2Body_GetPosition(platforms[i]->body), offset = 0.5f * platforms[i]->size;
         Rectangle platformRect = {platformPosition.x - offset.x, platformPosition.y - offset.y, platforms[i]->size.x, platforms[i]->size.y};
         float playerOffsetX = 0.45f * PlayerEntity->size.x, playerOffsetY = 0.5f * PlayerEntity->size.y;
         Vector2 offsetCenter = {playerPosition.x, playerPosition.y - playerOffsetY}, offsetLeft = {playerPosition.x - playerOffsetX, playerPosition.y - playerOffsetY}, offsetRight = {playerPosition.x + playerOffsetX, playerPosition.y - playerOffsetY};
@@ -47,6 +47,7 @@ void Jump()
         elapsedJumpTime = 0.0f;
 
     b2Body_SetLinearVelocity(PlayerEntity->body, {b2Body_GetLinearVelocity(PlayerEntity->body).x, PLAYER_JUMP_FORCE});
+    // TraceLog(LOG_INFO, "Jump with velocity {%.1f, %.1f}!", b2Body_GetLinearVelocity(PlayerEntity->body).x, b2Body_GetLinearVelocity(PlayerEntity->body).y);
 }
 
 void DrawPlayer()
@@ -85,13 +86,6 @@ void UpdatePlayer(Platform **platforms, int platformCount)
         elapsedJumpTime += GetFrameTime();
     }
 
-    if ((IsKeyDown(KEY_SPACE) || (IsGamepadAvailable(PLAYER_GAMEPAD) && IsGamepadButtonDown(PLAYER_GAMEPAD, GAMEPAD_BUTTON_RIGHT_FACE_DOWN))) && (grounded || elapsedCoyoteTime < PLAYER_COYOTE_TIME || (doubleJump && elapsedJumpTime > PLAYER_DOUBLE_JUMP_DELAY)))
-    {
-        if (!(grounded || elapsedCoyoteTime < PLAYER_COYOTE_TIME)) 
-            doubleJump = false;
-        Jump();
-    }
-
     float movingX = grounded ? 0.0f : playerVelocity.x;
 
     if (IsGamepadAvailable(PLAYER_GAMEPAD))
@@ -119,4 +113,11 @@ void UpdatePlayer(Platform **platforms, int platformCount)
     movingX = Clamp(movingX, - PLAYER_SPEED, PLAYER_SPEED);
 
     b2Body_SetLinearVelocity(PlayerEntity->body, {movingX, playerVelocity.y});
+
+    if ((IsKeyDown(KEY_SPACE) || (IsGamepadAvailable(PLAYER_GAMEPAD) && IsGamepadButtonDown(PLAYER_GAMEPAD, GAMEPAD_BUTTON_RIGHT_FACE_DOWN))) && (grounded || elapsedCoyoteTime < PLAYER_COYOTE_TIME || (doubleJump && elapsedJumpTime > PLAYER_DOUBLE_JUMP_DELAY)))
+    {
+        if (!(grounded || elapsedCoyoteTime < PLAYER_COYOTE_TIME)) 
+            doubleJump = false;
+        Jump();
+    }
 }

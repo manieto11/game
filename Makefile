@@ -6,10 +6,10 @@ CC  = gcc
 SRC_DIR   = ./src
 BUILD_DIR = builds
 OBJ_DIR   = obj
-INC_DIR	  = ./include
-INC_DIR	 += ./box2D/include
-INC_DIR	 += ./SteamworksSDK/public
-BOX_DIR	  = ./box2D/src
+INC_DIR	  = -I./include
+INC_DIR	 += -I./box2d/include
+INC_DIR	 += -I./SteamworksSDK/public
+BOX_DIR	  = ./box2d/src
 
 # ---------------- Files ----------------
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
@@ -37,7 +37,7 @@ all: game
 
 game: $(OBJS) $(BOX_O)
 	@mkdir -p $(BUILD_DIR)
-	$(CXX) $(OBJS) $(BOX_O) $(LDFLAGS) $(LIBDIRS) $(LIBS) -o $(BUILD_DIR)/game.AppImage
+	$(CXX) $(OBJS) $(BOX_O) $(LDFLAGS) $(LIBDIRS) $(LIBS) $(INC_DIR) -o $(BUILD_DIR)/game.AppImage
 	@for f in $(RUNTIME_LIBS); do \
 		if [ -f "$$f" ]; then cp -f "$$f" $(BUILD_DIR)/; fi; \
 	done
@@ -45,7 +45,7 @@ game: $(OBJS) $(BOX_O)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INC_DIR) -c $< -o $@
 
 $(OBJ_DIR)/%.a: $(BOX_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)

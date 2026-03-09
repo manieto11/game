@@ -22,7 +22,7 @@ void InitGame()
     SetWindowState(FLAG_WINDOW_RESIZABLE);
     if (fullscreen)
         SetWindowState(FLAG_BORDERLESS_WINDOWED_MODE);
-    SetExitKey(KEY_NULL);
+    // SetExitKey(KEY_NULL);
     SetTargetFPS(60);
 
     LoadGameTextures();
@@ -192,7 +192,7 @@ Platform *CreatePlatform()
     return nullptr;
 }
 
-Platform *CreatePlatform(Vector2 size, Vector2 position)
+Platform *CreatePlatform(b2Vec2 size, b2Vec2 position)
 {
     Platform *platform = new Platform(size);
 
@@ -200,7 +200,7 @@ Platform *CreatePlatform(Vector2 size, Vector2 position)
     {
 
         b2BodyDef bodyDef = b2DefaultBodyDef();
-        bodyDef.position = position;
+        bodyDef.position = {position.x, position.y};
 
         platform->body = b2CreateBody(MainWorld, &bodyDef);
 

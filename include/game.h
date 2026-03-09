@@ -39,7 +39,7 @@ void ClearEntities();
 // Create new platform. Use RemovePlatform or ClearPlatforms for memory clearance
 Platform *CreatePlatform();
 // Create new platform. Use RemovePlatform or ClearPlatforms for memory clearance
-Platform *CreatePlatform(Vector2 size, Vector2 position);
+Platform *CreatePlatform(b2Vec2 size, b2Vec2 position);
 // Add platform for drawing (if debugging)
 bool AddPlatform(Platform *platform);
 //Remove platform for drawing

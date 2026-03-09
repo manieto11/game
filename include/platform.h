@@ -2,15 +2,14 @@
 #define PLATFORM_H
 
 #include "box2d/box2d.h"
-#include "raylib.h"
 
 struct Platform
 {
     b2BodyId body;
-	const Vector2 size;
+	const b2Vec2 size;
 
 	Platform();
-	Platform(Vector2 size);
+	Platform(b2Vec2 size);
 };
 
 void DrawPlatformBorders(const Platform* platform);
