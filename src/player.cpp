@@ -5,8 +5,8 @@
 #include "settings.h"
 
 Entity *PlayerEntity;
-float elapsedCoyoteTime, elapsedJumpTime, step = 0.0f, bodyRotation;
-bool doubleJump, grounded;
+float inputX, elapsedCoyoteTime, lastJumpTime, step = 0.0f, bodyRotation;
+bool doubleJump, unlockedDoubleJump = false, grounded;
 b2Vec2 playerPosition, playerVelocity, bodyPos, leftLegPos, rightLegPos;
 
 void UpdatePlayerAnimation()
@@ -43,10 +43,13 @@ bool IsGrounded(Platform** platforms, int platformCount)
 
 void Jump()
 {
-    if (elapsedJumpTime != 0.0f)
-        elapsedJumpTime = 0.0f;
+    lastJumpTime = GetTime();
 
-    b2Body_SetLinearVelocity(PlayerEntity->body, {b2Body_GetLinearVelocity(PlayerEntity->body).x, PLAYER_JUMP_FORCE});
+    float jumpingVelocity = sqrtf(2.0f * PLAYER_JUMP_HEIGHT * GAME_GRAVITY);
+
+    // TraceLog(LOG_INFO, "Set jumping velocity to %.1f", jumpingVelocity);
+
+    playerVelocity.y = jumpingVelocity;
     // TraceLog(LOG_INFO, "Jump with velocity {%.1f, %.1f}!", b2Body_GetLinearVelocity(PlayerEntity->body).x, b2Body_GetLinearVelocity(PlayerEntity->body).y);
 }
 
@@ -83,41 +86,40 @@ void UpdatePlayer(Platform **platforms, int platformCount)
     else 
     {
         elapsedCoyoteTime += GetFrameTime();
-        elapsedJumpTime += GetFrameTime();
     }
 
-    float movingX = grounded ? 0.0f : playerVelocity.x;
+    //float movingX = grounded ? 0.0f : playerVelocity.x;
 
     if (IsGamepadAvailable(PLAYER_GAMEPAD))
     {
         float axisValue = GetGamepadAxisMovement(PLAYER_GAMEPAD, GAMEPAD_AXIS_LEFT_X);
         
-        // Debug output
+#if DEBUG
         const char* gamepadName = GetGamepadName(PLAYER_GAMEPAD);
         TraceLog(LOG_INFO, "Gamepad: %s, Axis: %.3f", gamepadName ? gamepadName : "Unknown", axisValue);
+#endif
         
-        // Apply dead zone
         if (fabs(axisValue) > 0.1f)
-            movingX = axisValue * PLAYER_SPEED;
+            inputX = axisValue;
     }
     else if ((IsKeyDown(movingLeftKey) || IsKeyDown(movingLeftKeySecondary)) && !(IsKeyDown(movingRightKey) || IsKeyDown(movingRightKeySecondary)))
-        movingX = grounded ? -PLAYER_SPEED : playerVelocity.x - PLAYER_AIR_ACCELERATION;
+        inputX -= INPUT_ACCELERATION;
     else if (!(IsKeyDown(movingLeftKey) || IsKeyDown(movingLeftKeySecondary)) && (IsKeyDown(movingRightKey) || IsKeyDown(movingRightKeySecondary)))
-        movingX = grounded ? PLAYER_SPEED : playerVelocity.x + PLAYER_AIR_ACCELERATION;
+        inputX += INPUT_ACCELERATION;
     else
-        if (grounded || playerVelocity.x == 0.0f) 
-            movingX = 0.0f;
+        if (fabs(inputX) < 0.1f)
+            inputX = 0.0f;
         else
-            movingX = playerVelocity.x > 0.0f ? (playerVelocity.x - PLAYER_AIR_ACCELERATION / 2.0f) : (playerVelocity.x + PLAYER_AIR_ACCELERATION / 2.0f);
+            inputX += inputX > 0.0f ? -INPUT_ACCELERATION : INPUT_ACCELERATION;
 
-    movingX = Clamp(movingX, - PLAYER_SPEED, PLAYER_SPEED);
+    inputX = Clamp(inputX, - 1.0f, 1.0f);
 
-    b2Body_SetLinearVelocity(PlayerEntity->body, {movingX, playerVelocity.y});
-
-    if ((IsKeyDown(KEY_SPACE) || (IsGamepadAvailable(PLAYER_GAMEPAD) && IsGamepadButtonDown(PLAYER_GAMEPAD, GAMEPAD_BUTTON_RIGHT_FACE_DOWN))) && (grounded || elapsedCoyoteTime < PLAYER_COYOTE_TIME || (doubleJump && elapsedJumpTime > PLAYER_DOUBLE_JUMP_DELAY)))
+    if ((GetTime() - lastJumpTime > PLAYER_JUMP_DELAY) && (IsKeyDown(KEY_SPACE) || (IsGamepadAvailable(PLAYER_GAMEPAD) && IsGamepadButtonDown(PLAYER_GAMEPAD, GAMEPAD_BUTTON_RIGHT_FACE_DOWN))) && (grounded || elapsedCoyoteTime < PLAYER_COYOTE_TIME || (unlockedDoubleJump && doubleJump)))
     {
         if (!(grounded || elapsedCoyoteTime < PLAYER_COYOTE_TIME)) 
             doubleJump = false;
         Jump();
     }
+
+    b2Body_SetLinearVelocity(PlayerEntity->body, {inputX * PLAYER_SPEED, playerVelocity.y});
 }

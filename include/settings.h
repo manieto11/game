@@ -14,18 +14,18 @@
 #define PIXELS_PER_UNIT 32
 // The objects' gravity force
 #define GAME_GRAVITY 8.0f
+// The input acceleration
+#define INPUT_ACCELERATION 10.0f * GetFrameTime()
 // The default gamepad of the player
 #define PLAYER_GAMEPAD 0
 // The player's speed on the ground
-#define PLAYER_SPEED 7.0f * speedMultiplier
+#define PLAYER_SPEED 5.0f * speedMultiplier
 // The player's jump force
-#define PLAYER_JUMP_FORCE 7.0f * jumpMultiplier
-// The player's acceleration in the air
-#define PLAYER_AIR_ACCELERATION 10.0f * speedMultiplier * GetFrameTime()
+#define PLAYER_JUMP_HEIGHT (3.5f + extraJumpHeight)
 // Time for the player in seconds to jump after falling of an edge
 #define PLAYER_COYOTE_TIME 0.2f
 // Time for the player to be able to jump again
-#define PLAYER_DOUBLE_JUMP_DELAY 0.2f
+#define PLAYER_JUMP_DELAY 0.2f
 
 // Set to 0 to hide debug information, set to 1 otherwise to show it
 #define DEBUG 1
@@ -40,7 +40,7 @@ inline float scaleMultiplier = 1.0f;
 // A multiplier for the player speed
 inline float speedMultiplier = 1.0f;
 // A multiplier for the player jump
-inline float jumpMultiplier = 1.0f;
+inline float extraJumpHeight = 0.0f;
 
 // True if Steam is working
 inline bool steamEnabled = false;
