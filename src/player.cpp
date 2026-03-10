@@ -5,23 +5,77 @@
 #include "settings.h"
 
 Entity *PlayerEntity;
-float inputX, elapsedCoyoteTime, lastJumpTime, step = 0.0f, bodyRotation;
+float inputX, elapsedCoyoteTime, lastJumpTime, step = 0.0f, bodyRotation, leftLegRotation, rightLegRotation;
 bool doubleJump, unlockedDoubleJump = false, grounded;
 b2Vec2 playerPosition, playerVelocity, bodyPos, leftLegPos, rightLegPos;
+
+float leftLegPosX(float step)
+{
+    if (step < 0.25f)
+        return Normalize(step, 0.0f, 0.25f);
+    else if (step < 0.5f)
+        return 1.0f;
+    else if (step < 0.75f)
+        return 1.0f - Normalize(step, 0.5f, 0.75f);
+    
+    return 0.0f;
+}
+
+float leftLegPosY(float step)
+{
+    if (step < 0.25f)
+        return 0.0f;
+    else if (step < 0.5f)
+        return Normalize(step, 0.25f, 0.5f);
+    else if (step < 0.75f)
+        return 1.0f;
+    
+    return 1.0f - Normalize(step, 0.75f, 1.0f);
+}
+
+float rightLegPosX(float step)
+{
+    if (step < 0.25f)
+        return Normalize(step, 0.0f, 0.25f);
+    else if (step < 0.5f)
+        return 1.0f;
+    else if (step < 0.75f)
+        return 1.0f - Normalize(step, 0.5f, 0.75f);
+    
+    return 0.0f;
+}
+
+float rightLegPosY(float step)
+{
+    if (step < 0.25f)
+        return 1.0f;
+    else if (step < 0.5f)
+        return 1.0f - Normalize(step, 0.25f, 0.5f);
+    else if (step < 0.75f)
+        return 0.0f;
+    
+    return Normalize(step, 0.75f, 1.0f);
+}
 
 void UpdatePlayerAnimation()
 {
     if (grounded && fabs(playerVelocity.x) > 0.1f)
     {
         step += GetFrameTime() * speedMultiplier * 3.0f;
-        if (step > 1.0f) 
+        while (step >= 1.0f) 
             step -= 1.0f;
     }
     
     bodyRotation = 10.0f * DEG2RAD * (playerVelocity.x / -(PLAYER_SPEED));
     
-    bodyPos = {playerPosition.x, playerPosition.y + 0.05f * sinf(2.0f * step * PI)};
-}
+    bodyPos = {playerPosition.x, playerPosition.y + 0.05f * cosf(2.0f * PI * step)};
+
+    //float legPosY = sin(2.0f * PI * step);
+
+    // TraceLog(LOG_INFO, "Step: %.2f, PosX: %.2f, PosY: %.2f", step, leftLegPosX(step), leftLegPosY(step));
+    leftLegPos = {bodyPos.x - 0.6f/* + 0.2f * leftLegPosX(step)*/, bodyPos.y - 0.5f + (fabs(playerVelocity.x) > 0.1f ? 0.15f * leftLegPosY(step) : 0.0f)};
+    rightLegPos = {bodyPos.x + 0.6f, bodyPos.y - 0.5f + (fabs(playerVelocity.x) > 0.1f ? 0.15f * rightLegPosY(step) : 0.0f)};
+} 
 
 bool IsGrounded(Platform** platforms, int platformCount)
 {
@@ -45,7 +99,7 @@ void Jump()
 {
     lastJumpTime = GetTime();
 
-    float jumpingVelocity = sqrtf(2.0f * PLAYER_JUMP_HEIGHT * GAME_GRAVITY);
+    float jumpingVelocity = sqrtf(2.0f * (PLAYER_JUMP_HEIGHT) * GAME_GRAVITY);
 
     // TraceLog(LOG_INFO, "Set jumping velocity to %.1f", jumpingVelocity);
 
@@ -57,8 +111,8 @@ void DrawPlayer()
 {
     Matrix sizeMat = MatrixScale(PlayerEntity->size.x, PlayerEntity->size.x, 1.0f), 
         bodyTransform = MatrixRotateZ(bodyRotation) * MatrixTranslate(PIXELS_PER_UNIT * bodyPos.x, - PIXELS_PER_UNIT * bodyPos.y, 0.0f) * sizeMat,
-        leftLegTransform  = MatrixTranslate(PIXELS_PER_UNIT * leftLegPos.x, - PIXELS_PER_UNIT * leftLegPos.y, 0.0f) * sizeMat,
-        rightLegTransform = MatrixTranslate(PIXELS_PER_UNIT * rightLegPos.x, - PIXELS_PER_UNIT * rightLegPos.y, 0.0f) * sizeMat;
+        leftLegTransform  = MatrixRotateZ(leftLegRotation) * MatrixTranslate(PIXELS_PER_UNIT * leftLegPos.x, - PIXELS_PER_UNIT * leftLegPos.y, 0.0f) * sizeMat,
+        rightLegTransform = MatrixRotateZ(rightLegRotation) * MatrixTranslate(PIXELS_PER_UNIT * rightLegPos.x, - PIXELS_PER_UNIT * rightLegPos.y, 0.0f) * sizeMat;
 
     DrawMesh(PlayerBodyMesh, PlayerMaterial, bodyTransform);
     DrawMesh(PlayerLegMesh, PlayerMaterial, leftLegTransform);
