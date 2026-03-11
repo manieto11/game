@@ -1,12 +1,10 @@
-//#include "game.h"
-//#include "raylib.h"
-//#include "settings.h"
+#include "game.h"
 #include "steam/steam_api.h"
 #include <iostream>
 
 int main()
 {
-    //InitGame();
+    InitGame();
 
     bool steamEnabled = SteamAPI_Init();
     if (!steamEnabled)
@@ -15,25 +13,12 @@ int main()
 
     float fixedUpdate = 0.0f;
 
-    std::cout << "Hello world!" << std::endl;
-
-    /*while (!WindowShouldClose())
+    while (GameRunning())
     {
-        if (IsKeyPressed(KEY_F11))
-        {
-            ToggleBorderlessWindowed();
-        }
-
-        if (IsWindowResized())
-        {
-            screenWidth = GetScreenWidth();
-            screenHeight = GetScreenHeight();
-        }
-
         if (steamEnabled)
             SteamAPI_RunCallbacks();
 
-        fixedUpdate += GetFrameTime();
+        // fixedUpdate += GetFrameTime();
 
         while (fixedUpdate >= FIXED_DELTA_TIME)
         {
@@ -43,28 +28,10 @@ int main()
 
         UpdateGame();
 
-        BeginDrawing();
-        
-        ClearBackground(SKYBLUE);
-
-        BeginMode3D(MainCamera);
         DrawGame();
-        EndMode3D();
+    }
 
-#if DEBUG
-
-        DrawLine(0, screenHeight / 2, screenWidth, screenHeight / 2, LIME);
-        DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, LIME);
-        DrawFPS(10, 10);
-
-#endif
-
-        EndDrawing();
-    }*/    
-
-    //FinishGame();
-
-    //SaveSettings();
+    FinishGame();
 
     SteamAPI_Shutdown();
 

@@ -4,12 +4,6 @@
 #include "box2d/box2d.h"
 // #include "raylib.h"
 
-// Title of the game's window
-#define GAME_TITLE "game"
-// Current version of the game
-#define VERSION "early_dev"
-// Time in seconds between physics' updates
-#define FIXED_DELTA_TIME 0.02f
 // Number of pixels considered a unit for drawing textures
 #define PIXELS_PER_UNIT 32
 // The objects' gravity force

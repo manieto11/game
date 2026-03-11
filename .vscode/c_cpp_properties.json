@@ -8,6 +8,7 @@
                 "${workspaceFolder}/SteamworksSDK/public",
                 "${workspaceFolder}/box2d/include",
                 "${workspaceFolder}/glfw/include",
+                "${workspaceFolder}/glm/glm",
                 "${workspaceFolder}/OpenAL/include",
                 "${workspaceFolder}/Vulkan/Include"
             ],
@@ -28,6 +29,7 @@
                 "${workspaceFolder}/SteamworksSDK/public",
                 "${workspaceFolder}/box2d/include",
                 "${workspaceFolder}/glfw/include",
+                "${workspaceFolder}/glm/glm",
                 "${workspaceFolder}/OpenAL/include",
                 "${workspaceFolder}/Vulkan/Include"
             ],

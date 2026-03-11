@@ -12,6 +12,7 @@ INC_DIR	 += -I./SteamworksSDK/public
 INC_DIR   += -I./glfw/include
 INC_DIR   += -I./OpenAL/include
 INC_DIR   += -I./Vulkan/Include
+INC_DIR   += -I./glm/glm
 BOX_DIR	  = ./box2d/src
 
 # ---------------- Files ----------------

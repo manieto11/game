@@ -32,6 +32,7 @@ GLFW_CFLAGS	= -D_GLFW_WIN32 -DUNICODE -D_UNICODE -I./glfw/src -I./glfw/deps
 INCL_DIRS	= -I./glfw/include
 INCL_DIRS	+= -I./OpenAL/include
 INCL_DIRS	+= -I./Vulkan/Include
+INCL_DIRS	+= -I./glm/glm
 
 # Steam SDK path
 INCL_DIRS	+= -I./SteamworksSDK/public
