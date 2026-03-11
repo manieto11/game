@@ -1,3 +1,4 @@
+/*
 #include "textures.h"
 #include "settings.h"
 
@@ -16,3 +17,4 @@ void UnloadGameTextures()
 {
     UnloadTexture(DefaultTexture);
 }
+*/

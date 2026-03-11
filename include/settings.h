@@ -2,7 +2,7 @@
 #define SETTINGS_H
 
 #include "box2d/box2d.h"
-#include "raylib.h"
+// #include "raylib.h"
 
 // Title of the game's window
 #define GAME_TITLE "game"
@@ -48,12 +48,12 @@ inline bool steamEnabled = false;
 inline bool fullscreen = false;
 
 // Key used to move left
-inline KeyboardKey movingLeftKey = KEY_A, 
-    movingLeftKeySecondary = KEY_LEFT;
+// inline KeyboardKey movingLeftKey = KEY_A, 
+//     movingLeftKeySecondary = KEY_LEFT;
 
 // Key used to move right
-inline KeyboardKey movingRightKey = KEY_D,
-    movingRightKeySecondary = KEY_RIGHT;
+// inline KeyboardKey movingRightKey = KEY_D,
+//     movingRightKeySecondary = KEY_RIGHT;
 
 //Load the user settings. Call SaveSettings before finishing execution to keep any changes
 void LoadSettings();

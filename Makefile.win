@@ -9,28 +9,36 @@ CC  = x86_64-w64-mingw32-gcc
 SRC_DIR   	= ./src
 BUILD_DIR 	= builds
 OBJ_DIR   	= obj
-BOX_DIR		= ./box2D/src
+BOX_DIR		= ./box2d/src
+GLFW_DIR	= ./glfw/src
 
 # ---------------- Files ----------------
 SRCS 		= $(wildcard $(SRC_DIR)/*.cpp)
 OBJS 		= $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
 BOX_S 		= $(wildcard $(BOX_DIR)/*.c)
-BOX_O 		= $(patsubst $(BOX_DIR)/%.c,$(OBJ_DIR)/%.a,$(BOX_S))
+BOX_O 		= $(patsubst $(BOX_DIR)/%.c,$(OBJ_DIR)/box2d/%.o,$(BOX_S))
+
+# Build GLFW from source to avoid depending on an external prebuilt glfw lib.
+GLFW_S		= $(wildcard $(GLFW_DIR)/*.c)
+GLFW_O		= $(patsubst $(GLFW_DIR)/%.c,$(OBJ_DIR)/glfw/%.o,$(GLFW_S))
 
 # ---------------- Flags ----------------
 CXXFLAGS 	= -O2 -std=c++17
 CFLAGS		= -O2 -std=c99
+GLFW_CFLAGS	= -D_GLFW_WIN32 -DUNICODE -D_UNICODE -I./glfw/src -I./glfw/deps
 
-# Raylib path
-INCL_DIRS	= -IC:/raylib/src
+# Third-party headers
+INCL_DIRS	= -I./glfw/include
+INCL_DIRS	+= -I./OpenAL/include
+INCL_DIRS	+= -I./Vulkan/Include
 
 # Steam SDK path
 INCL_DIRS	+= -I./SteamworksSDK/public
 
 # Include header files
 INCL_DIRS	+= -I./include
-INCL_DIRS	+= -I./box2D/include
+INCL_DIRS	+= -I./box2d/include
 INCL_DIRS	+= -IC:/ProgramData/mingw64/mingw64/lib/gcc/x86_64-w64-mingw32/13.2.0/include
 INCL_DIRS	+= -IC:/ProgramData/mingw64/mingw64/x86_64-w64-mingw32/include
 
@@ -38,15 +46,15 @@ INCL_DIRS	+= -IC:/ProgramData/mingw64/mingw64/x86_64-w64-mingw32/include
 C_EXTRA_FLAGS =
 
 # ---------------- Libraries ----------------
-LIBS 		= -lraylib -lsteam_api64 -lopengl32 -lgdi32 -lwinmm -luser32 -lkernel32 -lshell32 -lws2_32
-LIBDIRS 	= -L. -L./SteamworksSDK/redistributable_bin/win64 -LC:/raylib/src
+LIBS 		= -lopenal32 -lvulkan-1 -lsteam_api64 -lopengl32 -lgdi32 -lwinmm -luser32 -lkernel32 -lshell32 -lws2_32
+LIBDIRS 	= -L. -L./SteamworksSDK/redistributable_bin/win64 -L./OpenAL/libs/Win64 -L./Vulkan/Lib
 
 # ---------------- Target ----------------
 all: game
 
-game: $(OBJS) $(BOX_O)
+game: $(OBJS) $(BOX_O) $(GLFW_O)
 	@if not exist "$(BUILD_DIR)" mkdir "$(BUILD_DIR)"
-	$(CXX) $(OBJS) $(BOX_O) $(LIBDIRS) $(LIBS) -o $(BUILD_DIR)\game.exe
+	$(CXX) $(OBJS) $(BOX_O) $(GLFW_O) $(LIBDIRS) $(LIBS) -o $(BUILD_DIR)\game.exe
 	@if exist ".\SteamworksSDK\redistributable_bin\win64\steam_api64.dll" copy /y ".\SteamworksSDK\redistributable_bin\win64\steam_api64.dll" "$(BUILD_DIR)\steam_api64.dll"
 	@if not exist $(BUILD_DIR)\steam_appid.txt echo 480 > $(BUILD_DIR)\steam_appid.txt
 	@echo Build complete: $(BUILD_DIR)\game.exe
@@ -55,9 +63,13 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@if not exist "obj" mkdir "obj"
 	$(CXX) $(CXXFLAGS) $(INCL_DIRS) -c $< -o $@
 	
-$(OBJ_DIR)/%.a: $(BOX_DIR)/%.c
-	@if not exist "obj" mkdir "obj"
+$(OBJ_DIR)/box2d/%.o: $(BOX_DIR)/%.c
+	@if not exist "obj/box2d" mkdir "obj/box2d"
 	$(CC) $(CFLAGS) $(C_EXTRA_FLAGS) $(INCL_DIRS) -c $< -o $@
+
+$(OBJ_DIR)/glfw/%.o: $(GLFW_DIR)/%.c
+	@if not exist "obj/glfw" mkdir "obj/glfw"
+	$(CC) $(CFLAGS) $(GLFW_CFLAGS) $(INCL_DIRS) -c $< -o $@
 
 # ---------------- Utilities ----------------
 clean:

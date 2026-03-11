@@ -1,19 +1,23 @@
-#include "game.h"
-#include "raylib.h"
-#include "settings.h"
+//#include "game.h"
+//#include "raylib.h"
+//#include "settings.h"
 #include "steam/steam_api.h"
+#include <iostream>
 
 int main()
 {
-    InitGame();
+    //InitGame();
 
-    steamEnabled = SteamAPI_Init();
+    bool steamEnabled = SteamAPI_Init();
     if (!steamEnabled)
-        TraceLog(LOG_WARNING, "Steam API not enabled!");
+        //TraceLog(LOG_WARNING, "Steam API not enabled!");
+        std::cerr << "Steam API not enabled!" << std::endl;
 
     float fixedUpdate = 0.0f;
 
-    while (!WindowShouldClose())
+    std::cout << "Hello world!" << std::endl;
+
+    /*while (!WindowShouldClose())
     {
         if (IsKeyPressed(KEY_F11))
         {
@@ -56,11 +60,11 @@ int main()
 #endif
 
         EndDrawing();
-    }
+    }*/    
 
-    FinishGame();
+    //FinishGame();
 
-    SaveSettings();
+    //SaveSettings();
 
     SteamAPI_Shutdown();
 

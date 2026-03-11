@@ -1,0 +1,44 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/SteamworksSDK/public",
+                "${workspaceFolder}/box2d/include",
+                "${workspaceFolder}/glfw/include",
+                "${workspaceFolder}/OpenAL/include",
+                "${workspaceFolder}/Vulkan/Include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64"
+        },
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/SteamworksSDK/public",
+                "${workspaceFolder}/box2d/include",
+                "${workspaceFolder}/glfw/include",
+                "${workspaceFolder}/OpenAL/include",
+                "${workspaceFolder}/Vulkan/Include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "LINUX"
+            ],
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}

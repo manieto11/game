@@ -1,3 +1,4 @@
+/*
 #include "entity.h"
 #include "settings.h"
 #include "textures.h"
@@ -39,3 +40,4 @@ void DrawEntityBorder(Entity *entity)
     
     DrawRectangleLines(center.x - offset.x, center.y - offset.y, entity->size.x * PIXELS_PER_UNIT, entity->size.y * PIXELS_PER_UNIT, LIME);
 }
+*/

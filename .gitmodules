@@ -4,3 +4,6 @@
 [submodule "SteamworksSDK"]
 	path = SteamworksSDK
 	url = https://github.com/rlabrecque/SteamworksSDK
+[submodule "glfw"]
+	path = glfw
+	url = https://github.com/glfw/glfw

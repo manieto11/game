@@ -1,3 +1,4 @@
+/*
 #include "player.h"
 #include "materials.h"
 #include "meshes.h"
@@ -73,7 +74,7 @@ void UpdatePlayerAnimation()
     //float legPosY = sin(2.0f * PI * step);
 
     // TraceLog(LOG_INFO, "Step: %.2f, PosX: %.2f, PosY: %.2f", step, leftLegPosX(step), leftLegPosY(step));
-    leftLegPos = {bodyPos.x - 0.6f/* + 0.2f * leftLegPosX(step)*/, bodyPos.y - 0.5f + (fabs(playerVelocity.x) > 0.1f ? 0.15f * leftLegPosY(step) : 0.0f)};
+    leftLegPos = {bodyPos.x - 0.6f + 0.2f * leftLegPosX(step), bodyPos.y - 0.5f + (fabs(playerVelocity.x) > 0.1f ? 0.15f * leftLegPosY(step) : 0.0f)};
     rightLegPos = {bodyPos.x + 0.6f, bodyPos.y - 0.5f + (fabs(playerVelocity.x) > 0.1f ? 0.15f * rightLegPosY(step) : 0.0f)};
 } 
 
@@ -177,3 +178,4 @@ void UpdatePlayer(Platform **platforms, int platformCount)
 
     b2Body_SetLinearVelocity(PlayerEntity->body, {inputX * PLAYER_SPEED, playerVelocity.y});
 }
+*/

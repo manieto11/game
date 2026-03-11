@@ -1,3 +1,4 @@
+/*
 #include "game.h"
 #include "materials.h"
 #include "meshes.h"
@@ -257,3 +258,4 @@ void ClearPlatforms()
 
     PlatformCount = 0;
 }
+*/

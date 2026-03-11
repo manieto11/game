@@ -1,3 +1,4 @@
+/*
 #include "materials.h"
 
 Material PlayerMaterial;
@@ -12,3 +13,4 @@ void UnloadGameMaterials()
 {
     UnloadMaterial(PlayerMaterial);
 }
+*/

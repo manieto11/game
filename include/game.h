@@ -4,12 +4,12 @@
 #include "box2d/box2d.h"
 #include "entity.h"
 #include "platform.h"
-#include "raylib.h"
+// #include "raylib.h"
 
 #define MAX_ENTITIES 128
 #define MAX_PLATFORMS 128
 
-extern Camera MainCamera;
+//extern Camera MainCamera;
 extern b2WorldId MainWorld;
 extern Entity *Entities[MAX_ENTITIES];
 extern int EntityCount;

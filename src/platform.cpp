@@ -1,3 +1,4 @@
+/*
 #include "platform.h"
 #include "raylib.h"
 #include "settings.h"
@@ -21,3 +22,4 @@ Platform::Platform(b2Vec2 size) : size(size)
 {
     
 }
+*/

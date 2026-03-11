@@ -1,6 +1,6 @@
 # 2D Platformer Game (WIP)
 
-This repository contains an in-progress 2D platformer game built in C++ with raylib.
+This repository contains an in-progress 2D platformer game built in C++.
 
 ## Objective
 
@@ -15,5 +15,7 @@ The main goal of this project is to create a complete 2D platformer game that wi
 
 - box2d
 - C++
-- raylib
-- Steamworks API integration
+- glfw
+- OpenAl
+- SteamworksSDK
+- Vulkan

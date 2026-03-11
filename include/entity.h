@@ -2,13 +2,13 @@
 #define ENTITY_H
 
 #include "box2d/box2d.h"
-#include "raylib.h"
+//#include "raylib.h"
 
 struct Entity
 {
 	b2BodyId body;
-	Rectangle textureSource;
-	Texture2D *texture;
+//	Rectangle textureSource;
+//	Texture2D *texture;
 	const b2Vec2 size;
 
 	Entity();
