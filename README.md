@@ -17,3 +17,8 @@ The main goal of this project is to create a complete 2D platformer game that wi
 - C++
 - raylib
 - Steamworks API integration
+
+## Usage
+
+Compile with `make game`.
+Use `make help` to get extra help.
