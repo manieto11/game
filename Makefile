@@ -10,8 +10,8 @@ HOST_OS := linux
 endif
 
 # ---------------- Toolchains ----------------
-WINDOWS_CXX ?= g++
-WINDOWS_CC  ?= gcc
+WINDOWS_CXX ?= x86_64-w64-mingw32-g++
+WINDOWS_CC  ?= x86_64-w64-mingw32-gcc
 LINUX_CXX   ?= g++
 LINUX_CC    ?= gcc
 
