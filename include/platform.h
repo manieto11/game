@@ -12,6 +12,7 @@ struct Platform
 	Platform(b2Vec2 size);
 };
 
+void DrawPlatform(const Platform* platform);
 void DrawPlatformBorders(const Platform* platform);
 
 #endif

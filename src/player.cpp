@@ -6,8 +6,8 @@
 
 Entity *PlayerEntity;
 float inputX, elapsedCoyoteTime, lastJumpTime, step = 0.0f, bodyRotation, leftLegRotation, rightLegRotation;
-bool doubleJump, unlockedDoubleJump = false, grounded;
-b2Vec2 playerPosition, playerVelocity, bodyPos, leftLegPos, rightLegPos;
+bool doubleJump, unlockedDoubleJump = false, grounded, wallClimbing = false, unlockedWallClimbing = true;
+b2Vec2 playerPosition, playerVelocity, bodyPos, leftLegPos, rightLegPos, bodyUp = {0.0f, 1.0f};
 
 float leftLegPosX(float step)
 {
@@ -75,7 +75,35 @@ void UpdatePlayerAnimation()
     // TraceLog(LOG_INFO, "Step: %.2f, PosX: %.2f, PosY: %.2f", step, leftLegPosX(step), leftLegPosY(step));
     leftLegPos = {bodyPos.x - 0.6f/* + 0.2f * leftLegPosX(step)*/, bodyPos.y - 0.5f + (fabs(playerVelocity.x) > 0.1f ? 0.15f * leftLegPosY(step) : 0.0f)};
     rightLegPos = {bodyPos.x + 0.6f, bodyPos.y - 0.5f + (fabs(playerVelocity.x) > 0.1f ? 0.15f * rightLegPosY(step) : 0.0f)};
-} 
+}
+
+bool WallClimb(Platform** platforms, int platformCount)
+{
+    for (int i = 0; i < platformCount; ++i)
+    {
+        b2Vec2 platformPosition = b2Body_GetPosition(platforms[i]->body), offset = 0.5f * platforms[i]->size;
+        Rectangle platformRect = {platformPosition.x - offset.x, platformPosition.y - offset.y, platforms[i]->size.x, platforms[i]->size.y};
+        
+        //b2Vec2 playerPosition = b2Body_GetPosition(PlayerEntity->body);
+        offset = {0.5f * PlayerEntity->size.x + 0.05f, 0.0f};
+        Rectangle leftRect = {playerPosition.x - offset.x, playerPosition.y - offset.y, 0.1f, PlayerEntity->size.y * 0.8f},
+            rightRect = {playerPosition.x + offset.x, playerPosition.y - offset.y, 0.1f, PlayerEntity->size.y * 0.8f};
+
+        if (CheckCollisionRecs(platformRect, leftRect))
+        {
+            bodyUp = {1.0f, 0.0f};
+            return true;
+        }
+        else if (CheckCollisionRecs(platformRect, rightRect))
+        {
+            bodyUp = {-1.0f, 0.0f};
+            return true;
+        }
+    }
+
+    bodyUp = {0.0f, 1.0f};
+    return false;
+}
 
 bool IsGrounded(Platform** platforms, int platformCount)
 {
@@ -83,13 +111,13 @@ bool IsGrounded(Platform** platforms, int platformCount)
     {
         b2Vec2 platformPosition = b2Body_GetPosition(platforms[i]->body), offset = 0.5f * platforms[i]->size;
         Rectangle platformRect = {platformPosition.x - offset.x, platformPosition.y - offset.y, platforms[i]->size.x, platforms[i]->size.y};
-        float playerOffsetX = 0.45f * PlayerEntity->size.x, playerOffsetY = 0.5f * PlayerEntity->size.y;
-        Vector2 offsetCenter = {playerPosition.x, playerPosition.y - playerOffsetY}, offsetLeft = {playerPosition.x - playerOffsetX, playerPosition.y - playerOffsetY}, offsetRight = {playerPosition.x + playerOffsetX, playerPosition.y - playerOffsetY};
+        
+        //b2Vec2 playerPosition = b2Body_GetPosition(PlayerEntity->body);
+        offset = {0.5f * PlayerEntity->size.x, PlayerEntity->size.y / 2.0f + 0.05f};
+        Rectangle groundedRect = {playerPosition.x - offset.x, playerPosition.y - offset.y, PlayerEntity->size.x, 0.1f};
 
-        if (CheckCollisionPointRec(offsetCenter, platformRect) || 
-            CheckCollisionPointRec(offsetLeft, platformRect) ||
-            CheckCollisionPointRec(offsetRight, platformRect))
-                return true;
+        if (CheckCollisionRecs(platformRect, groundedRect))
+            return true;
     }
 
     return false;
@@ -101,10 +129,7 @@ void Jump()
 
     float jumpingVelocity = sqrtf(2.0f * (PLAYER_JUMP_HEIGHT) * GAME_GRAVITY);
 
-    // TraceLog(LOG_INFO, "Set jumping velocity to %.1f", jumpingVelocity);
-
     playerVelocity.y = jumpingVelocity;
-    // TraceLog(LOG_INFO, "Jump with velocity {%.1f, %.1f}!", b2Body_GetLinearVelocity(PlayerEntity->body).x, b2Body_GetLinearVelocity(PlayerEntity->body).y);
 }
 
 void DrawPlayer()
@@ -119,6 +144,20 @@ void DrawPlayer()
     DrawMesh(PlayerLegMesh, PlayerMaterial, rightLegTransform);
 }
 
+void DrawPlayerDebug()
+{
+    //b2Vec2 playerPosition = b2Body_GetPosition(PlayerEntity->body), 
+    b2Vec2 offset = {0.5f * PlayerEntity->size.x, PlayerEntity->size.y / 2.0f + 0.05f};
+    Rectangle groundedRect = {playerPosition.x - offset.x, playerPosition.y - offset.y, PlayerEntity->size.x, 0.1f};
+    DrawRectangleLines(groundedRect.x * PIXELS_PER_UNIT, -groundedRect.y * PIXELS_PER_UNIT, groundedRect.width * PIXELS_PER_UNIT, groundedRect.height * PIXELS_PER_UNIT, grounded ? LIME : RED);
+
+    offset = {0.5f * PlayerEntity->size.x + 0.05f, 0.0f};
+    Rectangle leftRect = {playerPosition.x - offset.x, playerPosition.y - offset.y, 0.1f, PlayerEntity->size.y * 0.8f},
+        rightRect = {playerPosition.x + offset.x, playerPosition.y - offset.y, 0.1f, PlayerEntity->size.y * 0.8f};
+    DrawRectangleLines(leftRect.x * PIXELS_PER_UNIT, -leftRect.y * PIXELS_PER_UNIT, leftRect.width * PIXELS_PER_UNIT, leftRect.height * PIXELS_PER_UNIT, bodyUp == b2Vec2({1.0f, 0.0f}) ? LIME : RED);
+    DrawRectangleLines(rightRect.x * PIXELS_PER_UNIT, -rightRect.y * PIXELS_PER_UNIT, rightRect.width * PIXELS_PER_UNIT, rightRect.height * PIXELS_PER_UNIT, bodyUp == b2Vec2({-1.0f, 0.0f}) ? LIME : RED);
+}
+
 void UpdatePlayer(Platform **platforms, int platformCount)
 {
     if (PlayerEntity == nullptr || !b2Body_IsValid(PlayerEntity->body))
@@ -127,6 +166,7 @@ void UpdatePlayer(Platform **platforms, int platformCount)
     playerPosition = b2Body_GetPosition(PlayerEntity->body);
 
     grounded = IsGrounded(platforms, platformCount);
+    if (unlockedWallClimbing) wallClimbing = WallClimb(platforms, platformCount);
     playerVelocity = b2Body_GetLinearVelocity(PlayerEntity->body);
 
     UpdatePlayerAnimation();
@@ -175,5 +215,7 @@ void UpdatePlayer(Platform **platforms, int platformCount)
         Jump();
     }
 
-    b2Body_SetLinearVelocity(PlayerEntity->body, {inputX * PLAYER_SPEED, playerVelocity.y});
+    if (bodyUp == b2Vec2({1.0f, 0.0f}) && !(grounded && inputX > 0.0f)) b2Body_SetLinearVelocity(PlayerEntity->body, {0.0f, -inputX * PLAYER_SPEED});
+    else if (bodyUp == b2Vec2({-1.0f, 0.0f}) && !(grounded && inputX < 0.0f)) b2Body_SetLinearVelocity(PlayerEntity->body, {0.0f, inputX * PLAYER_SPEED});
+    else b2Body_SetLinearVelocity(PlayerEntity->body, {inputX * PLAYER_SPEED, playerVelocity.y});
 }

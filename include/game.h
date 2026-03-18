@@ -24,11 +24,14 @@ void UpdateGame();
 void FixedUpdateGame();
 // Draws the frame
 void DrawGame();
+// Draws debug information
+void DrawDebug();
 // Clear memory no longer needed for game
 void FinishGame();
 
 // Create new entity. Use RemoveEntity or ClearEntities for memory clearance
 Entity *CreateEntity();
+
 // Add entity for drawing
 bool AddEntity(Entity *entity);
 //Remove entity for drawing
@@ -40,6 +43,9 @@ void ClearEntities();
 Platform *CreatePlatform();
 // Create new platform. Use RemovePlatform or ClearPlatforms for memory clearance
 Platform *CreatePlatform(b2Vec2 size, b2Vec2 position);
+// Rotating the platform may break player's ground detection (for now)
+// Platform *CreatePlatform(b2Vec2 size, b2Vec2 position, float angle);
+
 // Add platform for drawing (if debugging)
 bool AddPlatform(Platform *platform);
 //Remove platform for drawing

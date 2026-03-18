@@ -42,7 +42,7 @@ void InitGame()
 
     PlayerEntity = CreateEntity();
 
-    CreatePlatform({12.0f, 1.0f}, {0.0f, -2.0f});
+    CreatePlatform({1.0f, 10.0f}, {0.0f, -2.0f});
     CreatePlatform({14.0f, 1.0f}, {0.0f, -5.0f});
 }
 
@@ -60,23 +60,32 @@ void DrawGame()
 {
     for (int i = 0; i < EntityCount; i++)
     {
-#if DEBUG
-        DrawEntityBorder(Entities[i]);
-#endif
-
         if (Entities[i] == PlayerEntity) continue;
 
         DrawEntity(Entities[i]);
     }
 
-#if DEBUG
+    for (int i = 0; i < PlatformCount; i++)
+    {
+        DrawPlatform(Platforms[i]);
+    }
+
+    DrawPlayer();
+}
+
+void DrawDebug()
+{
+    for (int i = 0; i < EntityCount; i++)
+    {
+        DrawEntityBorder(Entities[i]);
+    }
+
     for (int i = 0; i < PlatformCount; i++)
     {
         DrawPlatformBorders(Platforms[i]);
     }
-#endif
 
-    DrawPlayer();
+    DrawPlayerDebug();
 }
 
 void FinishGame()
@@ -215,6 +224,31 @@ Platform *CreatePlatform(b2Vec2 size, b2Vec2 position)
 
     return nullptr;
 }
+
+/*Platform *CreatePlatform(b2Vec2 size, b2Vec2 position, float angle)
+{
+    Platform *platform = new Platform(size);
+
+    if (AddPlatform(platform))
+    {
+
+        b2BodyDef bodyDef = b2DefaultBodyDef();
+        bodyDef.position = {position.x, position.y};
+        bodyDef.rotation = b2MakeRot(DEG2RAD * angle);
+
+        platform->body = b2CreateBody(MainWorld, &bodyDef);
+
+        b2Polygon groundBox = b2MakeBox(size.x / 2.0f, size.y / 2.0f);
+        b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+        b2CreatePolygonShape(platform->body, &groundShapeDef, &groundBox);
+
+        return platform;
+    }
+
+    delete platform;
+
+    return nullptr;
+}*/
 
 bool AddPlatform(Platform *platform)
 {

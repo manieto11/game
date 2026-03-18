@@ -2,3 +2,4 @@
 obj/
 builds/
 third_party/
+shaders/*.txt
