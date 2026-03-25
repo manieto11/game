@@ -4,6 +4,11 @@
 #include "raymath.h"
 #include "settings.h"
 
+Entity *PlayerEntity;
+float inputX, elapsedCoyoteTime, lastJumpTime, step = 0.0f, bodyRotation, leftLegRotation, rightLegRotation;
+bool doubleJump, unlockedDoubleJump = false, grounded, wallClimbing = false, unlockedWallClimbing = true;
+b2Vec2 playerPosition, playerVelocity, bodyPos, leftLegPos, rightLegPos, bodyUp = {0.0f, 1.0f};
+
 namespace
 {
     constexpr float kInputDeadzone = 0.1f;
@@ -39,16 +44,11 @@ namespace
 
     Rectangle WallProbeRect(const b2Vec2& position, bool rightSide)
     {
-        const b2Vec2 offset = {0.5f * PlayerEntity->size.x + 0.05f, PlayerEntity->size.y * 0.8f / 2.0f};
+        const b2Vec2 offset = {0.5f * PlayerEntity->size.x + 0.05f, PlayerEntity->size.y * 0.95f / 2.0f};
         const float x = rightSide ? position.x + offset.x : position.x - offset.x;
-        return {x, position.y - offset.y, 0.1f, PlayerEntity->size.y * 0.8f};
+        return {x, position.y - offset.y, 0.1f, PlayerEntity->size.y * 0.95f};
     }
 }
-
-Entity *PlayerEntity;
-float inputX, elapsedCoyoteTime, lastJumpTime, step = 0.0f, bodyRotation, leftLegRotation, rightLegRotation;
-bool doubleJump, unlockedDoubleJump = false, grounded, wallClimbing = false, unlockedWallClimbing = true;
-b2Vec2 playerPosition, playerVelocity, bodyPos, leftLegPos, rightLegPos, bodyUp = {0.0f, 1.0f};
 
 void UpdatePlayerAnimation()
 {
@@ -115,7 +115,7 @@ void Jump()
 
     float jumpingVelocity = sqrtf(2.0f * (PLAYER_JUMP_HEIGHT) * GAME_GRAVITY);
 
-    playerVelocity = jumpingVelocity * bodyUp;
+    playerVelocity += jumpingVelocity * bodyUp;
 }
 
 void DrawPlayer()
@@ -137,8 +137,8 @@ void DrawPlayerDebug()
 
     const Rectangle leftRect = WallProbeRect(playerPosition, false);
     const Rectangle rightRect = WallProbeRect(playerPosition, true);
-    DrawRectangleLines(leftRect.x * PIXELS_PER_UNIT, -leftRect.y * PIXELS_PER_UNIT, leftRect.width * PIXELS_PER_UNIT, leftRect.height * PIXELS_PER_UNIT, bodyUp == b2Vec2({1.0f, 0.0f}) ? LIME : RED);
-    DrawRectangleLines(rightRect.x * PIXELS_PER_UNIT, -rightRect.y * PIXELS_PER_UNIT, rightRect.width * PIXELS_PER_UNIT, rightRect.height * PIXELS_PER_UNIT, bodyUp == b2Vec2({-1.0f, 0.0f}) ? LIME : RED);
+    DrawRectangleLines(leftRect.x * PIXELS_PER_UNIT, (-leftRect.y - 0.95f * PlayerEntity->size.y) * PIXELS_PER_UNIT, leftRect.width * PIXELS_PER_UNIT, leftRect.height * PIXELS_PER_UNIT, bodyUp == b2Vec2({1.0f, 0.0f}) ? LIME : RED);
+    DrawRectangleLines(rightRect.x * PIXELS_PER_UNIT, (-rightRect.y - 0.95f * PlayerEntity->size.y) * PIXELS_PER_UNIT, rightRect.width * PIXELS_PER_UNIT, rightRect.height * PIXELS_PER_UNIT, bodyUp == b2Vec2({-1.0f, 0.0f}) ? LIME : RED);
 }
 
 void UpdatePlayer(Platform **platforms, int platformCount)
@@ -153,8 +153,12 @@ void UpdatePlayer(Platform **platforms, int platformCount)
     const bool gamepadAvailable = IsGamepadAvailable(PLAYER_GAMEPAD);
 
     grounded = IsGrounded(platforms, platformCount);
+
     if (unlockedWallClimbing)
         wallClimbing = WallClimb(platforms, platformCount);
+    else if (wallClimbing)
+        wallClimbing = false;
+
     playerVelocity = b2Body_GetLinearVelocity(PlayerEntity->body);
 
     UpdatePlayerAnimation();
@@ -217,4 +221,5 @@ void UpdatePlayer(Platform **platforms, int platformCount)
     {
         b2Body_SetLinearVelocity(PlayerEntity->body, {inputX * PLAYER_SPEED, 0.0f});
     }
+    else b2Body_SetLinearVelocity(PlayerEntity->body, playerVelocity);
 }

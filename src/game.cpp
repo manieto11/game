@@ -14,7 +14,9 @@ int PlatformCount = 0;
 
 void InitGame()
 {
-    // SetTraceLogLevel(LOG_WARNING);
+#if DEBUG == 0
+    SetTraceLogLevel(LOG_WARNING);
+#endif
 
     LoadSettings();
 
@@ -22,7 +24,9 @@ void InitGame()
     SetWindowState(FLAG_WINDOW_RESIZABLE);
     if (fullscreen)
         SetWindowState(FLAG_BORDERLESS_WINDOWED_MODE);
-    // SetExitKey(KEY_NULL);
+#if DEBUG == 0
+    SetExitKey(KEY_NULL);
+#endif
     SetTargetFPS(60);
 
     LoadGameTextures();

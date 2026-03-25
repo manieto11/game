@@ -87,11 +87,13 @@ ifeq ($(HOST_OS),windows)
 to_win_path = $(subst /,\,$(1))
 ensure_dir = @if not exist "$(call to_win_path,$(1))" mkdir "$(call to_win_path,$(1))"
 remove_dir = @if exist "$(call to_win_path,$(1))" rmdir /S /Q "$(call to_win_path,$(1))"
+remove_files = @if exist "$(call to_win_path,$(1))" del /Q "$(call to_win_path,$(1))"
 copy_file_if_exists = @if exist "$(call to_win_path,$(1))" copy /Y "$(call to_win_path,$(1))" "$(call to_win_path,$(2))" >nul
 ensure_steam_appid = @if exist "$(call to_win_path,$(STEAM_APPID))" (copy /Y "$(call to_win_path,$(STEAM_APPID))" "$(call to_win_path,$(1))\steam_appid.txt" >nul) else (echo 480> "$(call to_win_path,$(1))\steam_appid.txt")
 else
 ensure_dir = @mkdir -p "$(1)"
 remove_dir = @rm -rf "$(1)"
+remove_files = @rm -f $(1)
 copy_file_if_exists = @if [ -f "$(1)" ]; then cp -f "$(1)" "$(2)"; fi
 ensure_steam_appid = @if [ -f "$(STEAM_APPID)" ]; then cp -f "$(STEAM_APPID)" "$(1)/steam_appid.txt"; else printf '480\n' > "$(1)/steam_appid.txt"; fi
 endif
@@ -123,9 +125,15 @@ $(TARGET_OBJ)/box2d/%.o: $(BOX_DIR)/%.c
 	$(call ensure_dir,$(@D))
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
+ifeq ($(HOST_OS),windows)
 clean:
-	$(call remove_dir,$(TARGET_OBJ))
+	$(call remove_files,$(TARGET_OBJ)/*.o)
+	$(call remove_dir,$(TARGET_DIR))	
+else
+clean:
+	$(call remove_files,$(TARGET_OBJ)/*.o)
 	$(call remove_dir,$(TARGET_DIR))
+endif
 
 clean-all:
 	$(call remove_dir,$(OBJ_ROOT))
