@@ -1,7 +1,7 @@
 #include "textures.h"
 #include "settings.h"
 
-Texture2D DefaultTexture;
+Texture2D DefaultTexture, BackgroundTexture, IronBeamTexture, PlayerTexture;
 
 void LoadGameTextures()
 {
@@ -10,9 +10,17 @@ void LoadGameTextures()
         TraceLog(LOG_WARNING, "Image not valid!");
     DefaultTexture = LoadTextureFromImage(image);
     UnloadImage(image);
+
+    BackgroundTexture = LoadTexture("../../textures/background.png");
+    IronBeamTexture = LoadTexture("../../textures/iron_beam.png");
+    PlayerTexture = LoadTexture("../../textures/main_character.png");
 }
 
 void UnloadGameTextures()
 {
     UnloadTexture(DefaultTexture);
+
+    UnloadTexture(BackgroundTexture);
+    UnloadTexture(IronBeamTexture);
+    UnloadTexture(PlayerTexture);
 }

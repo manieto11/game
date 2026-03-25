@@ -1,8 +1,8 @@
 #include "player.h"
-#include "materials.h"
-#include "meshes.h"
+#include <cmath>
 #include "raymath.h"
 #include "settings.h"
+#include "textures.h"
 
 Entity *PlayerEntity;
 float inputX, elapsedCoyoteTime, lastJumpTime, step = 0.0f, bodyRotation, leftLegRotation, rightLegRotation;
@@ -59,7 +59,7 @@ void UpdatePlayerAnimation()
             step -= 1.0f;
     }
     
-    bodyRotation = 10.0f * DEG2RAD * (playerVelocity.x / -(PLAYER_SPEED));
+    bodyRotation = 10.0f * (playerVelocity.x / -(PLAYER_SPEED));
     
     bodyPos = {playerPosition.x, playerPosition.y + 0.05f * cosf(2.0f * PI * step)};
 
@@ -120,14 +120,24 @@ void Jump()
 
 void DrawPlayer()
 {
-    Matrix sizeMat = MatrixScale(PlayerEntity->size.x, PlayerEntity->size.x, 1.0f), 
+    /*Matrix sizeMat = MatrixScale(PlayerEntity->size.x, PlayerEntity->size.x, 1.0f), 
         bodyTransform = MatrixRotateZ(bodyRotation) * MatrixTranslate(PIXELS_PER_UNIT * bodyPos.x, - PIXELS_PER_UNIT * bodyPos.y, 0.0f) * sizeMat,
         leftLegTransform  = MatrixRotateZ(leftLegRotation) * MatrixTranslate(PIXELS_PER_UNIT * leftLegPos.x, - PIXELS_PER_UNIT * leftLegPos.y, 0.0f) * sizeMat,
         rightLegTransform = MatrixRotateZ(rightLegRotation) * MatrixTranslate(PIXELS_PER_UNIT * rightLegPos.x, - PIXELS_PER_UNIT * rightLegPos.y, 0.0f) * sizeMat;
 
     DrawMesh(PlayerBodyMesh, PlayerMaterial, bodyTransform);
     DrawMesh(PlayerLegMesh, PlayerMaterial, leftLegTransform);
-    DrawMesh(PlayerLegMesh, PlayerMaterial, rightLegTransform);
+    DrawMesh(PlayerLegMesh, PlayerMaterial, rightLegTransform);*/
+
+    Rectangle bodySource = {0.0f, 0.0f, 32.0f, 32.0f},
+        legSource = {32.0f, 0.0f, 32.0f, 32.0f}, 
+        bodyDest = {bodyPos.x * PIXELS_PER_UNIT, - bodyPos.y * PIXELS_PER_UNIT, PlayerEntity->size.x * PIXELS_PER_UNIT, PlayerEntity->size.y * PIXELS_PER_UNIT},
+        leftLegDest = {leftLegPos.x * PIXELS_PER_UNIT, - leftLegPos.y * PIXELS_PER_UNIT, PlayerEntity->size.x * PIXELS_PER_UNIT, PlayerEntity->size.y * PIXELS_PER_UNIT}, 
+        rightLegDest = {rightLegPos.x * PIXELS_PER_UNIT, - rightLegPos.y * PIXELS_PER_UNIT, PlayerEntity->size.x * PIXELS_PER_UNIT, PlayerEntity->size.y * PIXELS_PER_UNIT};
+
+    DrawTexturePro(PlayerTexture, bodySource, bodyDest, {bodyDest.width / 2.0f, bodyDest.height / 2.0f}, bodyRotation, WHITE);
+    DrawTexturePro(PlayerTexture, legSource, leftLegDest, {leftLegDest.width / 2.0f, leftLegDest.height}, leftLegRotation, WHITE);
+    DrawTexturePro(PlayerTexture, legSource, rightLegDest, {rightLegDest.width / 2.0f, rightLegDest.height}, rightLegRotation, WHITE);
 }
 
 void DrawPlayerDebug()
