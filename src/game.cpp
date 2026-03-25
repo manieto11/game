@@ -42,7 +42,7 @@ void InitGame()
 
     PlayerEntity = CreateEntity();
 
-    CreatePlatform({1.0f, 10.0f}, {0.0f, -2.0f});
+    CreatePlatform({1.0f, 10.0f}, {0.0f, -0.5f});
     CreatePlatform({14.0f, 1.0f}, {0.0f, -5.0f});
 }
 
