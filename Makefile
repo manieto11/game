@@ -50,6 +50,7 @@ SRCS     := $(wildcard $(SRC_DIR)/*.cpp)
 BOX_SRCS := $(wildcard $(BOX_DIR)/*.c)
 OBJS     := $(patsubst $(SRC_DIR)/%.cpp,$(TARGET_OBJ)/%.o,$(SRCS))
 BOX_OBJS := $(patsubst $(BOX_DIR)/%.c,$(TARGET_OBJ)/box2d/%.o,$(BOX_SRCS))
+DEPS     := $(OBJS:.o=.d) $(BOX_OBJS:.o=.d)
 
 # ---------------- Flags ----------------
 CXXFLAGS ?= -O2 -std=c++17
@@ -119,21 +120,15 @@ endif
 
 $(TARGET_OBJ)/%.o: $(SRC_DIR)/%.cpp
 	$(call ensure_dir,$(@D))
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -MMD -MP -c $< -o $@
 
 $(TARGET_OBJ)/box2d/%.o: $(BOX_DIR)/%.c
 	$(call ensure_dir,$(@D))
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -MMD -MP -c $< -o $@
 
-ifeq ($(HOST_OS),windows)
 clean:
-	$(call remove_files,$(TARGET_OBJ)/*.o)
-	$(call remove_dir,$(TARGET_DIR))	
-else
-clean:
-	$(call remove_files,$(TARGET_OBJ)/*.o)
+	$(call remove_dir,$(TARGET_OBJ))
 	$(call remove_dir,$(TARGET_DIR))
-endif
 
 clean-all:
 	$(call remove_dir,$(OBJ_ROOT))
@@ -155,3 +150,5 @@ help:
 	@echo Override the native compiler with CXX=... CC=...
 
 .PHONY: all game clean clean-all run help
+
+-include $(DEPS)
