@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <vector>
 #include "box2d/box2d.h"
 #include "entity.h"
 #include "platform.h"
@@ -11,10 +12,8 @@
 
 extern Camera MainCamera;
 extern b2WorldId MainWorld;
-extern Entity *Entities[MAX_ENTITIES];
-extern int EntityCount;
-extern Platform *Platforms[MAX_PLATFORMS];
-extern int PlatformCount;
+extern std::vector<Entity*> Entities;
+extern std::vector<Platform*> Platforms;
 
 // Initialize variable required for game
 void InitGame();
@@ -34,9 +33,9 @@ Entity *CreateEntity();
 
 // Add entity for drawing
 bool AddEntity(Entity *entity);
-//Remove entity for drawing
+// Remove entity for drawing
 void RemoveEntity(Entity* entity);
-// Removes all the entities
+// Remove all the entities
 void ClearEntities();
 
 // Create new platform. Use RemovePlatform or ClearPlatforms for memory clearance
@@ -44,7 +43,7 @@ Platform *CreatePlatform();
 // Create new platform. Use RemovePlatform or ClearPlatforms for memory clearance
 Platform *CreatePlatform(b2Vec2 size, b2Vec2 position);
 // Rotating the platform may break player's ground detection (for now)
-// Platform *CreatePlatform(b2Vec2 size, b2Vec2 position, float angle);
+// Platform *CreatePlatform(b2Vec2 size, b2Vec2 position, float angle); //<- Fix platform drawing
 
 // Add platform for drawing (if debugging)
 bool AddPlatform(Platform *platform);

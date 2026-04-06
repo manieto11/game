@@ -7,10 +7,8 @@
 
 Camera MainCamera;
 b2WorldId MainWorld;
-Entity *Entities[MAX_ENTITIES] = {nullptr};
-int EntityCount = 0;
-Platform *Platforms[MAX_PLATFORMS] = {nullptr};
-int PlatformCount = 0;
+std::vector<Entity*> Entities;
+std::vector<Platform*> Platforms;
 
 void InitGame()
 {
@@ -52,7 +50,7 @@ void InitGame()
 
 void UpdateGame()
 {
-    UpdatePlayer(Platforms, PlatformCount);
+    UpdatePlayer(Platforms);
 }
 
 void FixedUpdateGame()
@@ -62,14 +60,14 @@ void FixedUpdateGame()
 
 void DrawGame()
 {
-    for (int i = 0; i < EntityCount; i++)
+    for (size_t i = 0; i < Entities.size(); i++)
     {
         if (Entities[i] == PlayerEntity) continue;
 
         DrawEntity(Entities[i]);
     }
 
-    for (int i = 0; i < PlatformCount; i++)
+    for (size_t i = 0; i < Platforms.size(); i++)
     {
         DrawPlatform(Platforms[i]);
     }
@@ -79,12 +77,12 @@ void DrawGame()
 
 void DrawDebug()
 {
-    for (int i = 0; i < EntityCount; i++)
+    for (size_t i = 0; i < Entities.size(); i++)
     {
         DrawEntityBorder(Entities[i]);
     }
 
-    for (int i = 0; i < PlatformCount; i++)
+    for (size_t i = 0; i < Platforms.size(); i++)
     {
         DrawPlatformBorders(Platforms[i]);
     }
@@ -141,21 +139,23 @@ Entity *CreateEntity()
 
 bool AddEntity(Entity *entity)
 {
-    if (EntityCount >= MAX_ENTITIES)
+    if (Entities.size() >= MAX_ENTITIES)
     {
         TraceLog(LOG_WARNING, "Not enough space for more entities!");
         return false;
     }
 
-    Entities[EntityCount] = entity;
-    EntityCount++;
+    Entities.push_back(entity);
 
     return true;
 }
 
 void RemoveEntity(Entity *entity)
 {
-    for (int i = 0; i < EntityCount; ++i)
+    if (entity == nullptr)
+        return;
+
+    for (size_t i = 0; i < Entities.size(); ++i)
     {
         if (Entities[i] != entity)
             continue;
@@ -163,8 +163,8 @@ void RemoveEntity(Entity *entity)
         b2DestroyBody(entity->body);
 
         delete Entities[i];
-        EntityCount--;
-        Entities[i] = Entities[EntityCount];
+        Entities[i] = Entities.back();
+        Entities.pop_back();
 
         break;
     }
@@ -172,13 +172,13 @@ void RemoveEntity(Entity *entity)
 
 void ClearEntities()
 {
-    for (int i = 0; i < EntityCount; ++i)
+    for (int i = 0; i < Entities.size(); ++i)
     {
         b2DestroyBody(Entities[i]->body);
         delete Entities[i];
     }
 
-    EntityCount = 0;
+    Entities.clear();
 }
 
 Platform *CreatePlatform()
@@ -256,21 +256,20 @@ Platform *CreatePlatform(b2Vec2 size, b2Vec2 position)
 
 bool AddPlatform(Platform *platform)
 {
-    if (PlatformCount >= MAX_PLATFORMS)
+    if (Platforms.size() >= MAX_PLATFORMS)
     {
         TraceLog(LOG_WARNING, "Not enough space for more platforms!");
         return false;
     }
 
-    Platforms[PlatformCount] = platform;
-    PlatformCount++;
+    Platforms.push_back(platform);
 
     return true;
 }
 
 void RemovePlatform(Platform *platform)
 {
-    for (int i = 0; i < PlatformCount; ++i)
+    for (size_t i = 0; i < Platforms.size(); ++i)
     {
         if (Platforms[i] != platform)
             continue;
@@ -278,8 +277,8 @@ void RemovePlatform(Platform *platform)
         b2DestroyBody(platform->body);
 
         delete Platforms[i];
-        PlatformCount--;
-        Platforms[i] = Platforms[PlatformCount];
+        Platforms[i] = Platforms.back();
+        Platforms.pop_back();
 
         return;
     }
@@ -287,11 +286,11 @@ void RemovePlatform(Platform *platform)
 
 void ClearPlatforms()
 {
-    for (int i = 0; i < PlatformCount; ++i)
+    for (size_t i = 0; i < Platforms.size(); ++i)
     {
         b2DestroyBody(Platforms[i]->body);
         delete Platforms[i];
     }
 
-    PlatformCount = 0;
+    Platforms.clear();
 }
