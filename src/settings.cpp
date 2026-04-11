@@ -2,10 +2,8 @@
 
 void LoadSettings()
 {
-    
 }
 
 void SaveSettings()
 {
-    
 }

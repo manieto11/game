@@ -1,7 +1,6 @@
 #include "platform.h"
 #include "raylib.h"
 #include "settings.h"
-#include <cmath>
 
 static Vector2 RotateOffset(Vector2 v, float c, float s)
 {
@@ -10,16 +9,16 @@ static Vector2 RotateOffset(Vector2 v, float c, float s)
 
 void DrawPlatform(const Platform *platform)
 {
-    b2Vec2 offset = PIXELS_PER_UNIT / 2.0f * platform->size,
-        center = PIXELS_PER_UNIT * b2Body_GetPosition(platform->body);
+    b2Vec2 offset = PIXELS_PER_UNIT / 2.0f * platform->size;
+    b2Vec2 center = PIXELS_PER_UNIT * b2Body_GetPosition(platform->body);
 
     center.y = -center.y;
 
     Rectangle rec = {center.x, center.y, platform->size.x * PIXELS_PER_UNIT, platform->size.y * PIXELS_PER_UNIT};
 
-    float rot = b2Rot_GetAngle(b2Body_GetRotation(platform->body));
+    const float rot = b2Rot_GetAngle(b2Body_GetRotation(platform->body));
 
-    DrawRectanglePro(rec, {offset.x, offset.y}, - RAD2DEG * rot, DARKGRAY);
+    DrawRectanglePro(rec, {offset.x, offset.y}, -RAD2DEG * rot, DARKGRAY);
 }
 
 void DrawPlatformBorders(const Platform *platform)
@@ -29,11 +28,6 @@ void DrawPlatformBorders(const Platform *platform)
 
     const float halfW = platform->size.x * PIXELS_PER_UNIT * 0.5f;
     const float halfH = platform->size.y * PIXELS_PER_UNIT * 0.5f;
-
-    // Match DrawPlatform: Y is flipped in screen space, so rotation must be negated.
-    //const float angle = -b2Rot_GetAngle(b2Body_GetRotation(platform->body));
-    //const float c = cosf(angle);
-    //const float s = sinf(angle);
 
     const float c = -b2Body_GetRotation(platform->body).c;
     const float s = b2Body_GetRotation(platform->body).s;
@@ -61,10 +55,8 @@ void DrawPlatformBorders(const Platform *platform)
 
 Platform::Platform() : size({1.0f, 1.0f})
 {
-
 }
 
 Platform::Platform(b2Vec2 size) : size(size)
 {
-    
 }

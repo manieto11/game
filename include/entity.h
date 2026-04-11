@@ -8,7 +8,7 @@ struct Entity
 {
 	b2BodyId body;
 	Rectangle textureSource;
-	Texture2D *texture;
+	Texture2D* texture;
 	const b2Vec2 size;
 
 	Entity();
@@ -16,8 +16,8 @@ struct Entity
 };
 
 // Draw the entity
-void DrawEntity(Entity *entity);
+void DrawEntity(const Entity* entity);
 // Draw the entity's border for debugging
-void DrawEntityBorder(Entity *entity);
+void DrawEntityBorder(const Entity* entity);
 
 #endif

@@ -14,14 +14,8 @@
 #define PIXELS_PER_UNIT 128
 // The objects' gravity force
 #define GAME_GRAVITY 8.0f
-// The input acceleration
-#define INPUT_ACCELERATION 8.0f * GetFrameTime()
 // The default gamepad of the player
 #define PLAYER_GAMEPAD 0
-// The player's speed on the ground
-#define PLAYER_SPEED 5.0f * speedMultiplier
-// The player's jump force
-#define PLAYER_JUMP_HEIGHT 3.5f + extraJumpHeight
 // Time for the player in seconds to jump after falling of an edge
 #define PLAYER_COYOTE_TIME 0.2f
 // Time for the player to be able to jump again
@@ -54,6 +48,21 @@ inline KeyboardKey movingLeftKey = KEY_A,
 // Key used to move right
 inline KeyboardKey movingRightKey = KEY_D,
     movingRightKeySecondary = KEY_RIGHT;
+
+inline float GetInputAcceleration()
+{
+    return 8.0f * GetFrameTime();
+}
+
+inline float GetPlayerSpeed()
+{
+    return 5.0f * speedMultiplier;
+}
+
+inline float GetPlayerJumpHeight()
+{
+    return 3.5f + extraJumpHeight;
+}
 
 //Load the user settings. Call SaveSettings before finishing execution to keep any changes
 void LoadSettings();

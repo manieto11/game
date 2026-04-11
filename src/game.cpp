@@ -1,14 +1,14 @@
 #include "game.h"
-#include "materials.h"
-#include "meshes.h"
 #include "player.h"
 #include "settings.h"
 #include "textures.h"
+#include <memory>
+#include <utility>
 
 Camera MainCamera;
 b2WorldId MainWorld;
-std::vector<Entity*> Entities;
-std::vector<Platform*> Platforms;
+std::vector<std::unique_ptr<Entity>> Entities;
+std::vector<std::unique_ptr<Platform>> Platforms;
 
 void InitGame()
 {
@@ -28,8 +28,6 @@ void InitGame()
     SetTargetFPS(60);
 
     LoadGameTextures();
-    LoadGameMaterials();
-    LoadGameMeshes();
 
     MainCamera.position = {0.0f, 0.0f, -10.0f};
     MainCamera.target = {0.0f, 0.0f, 0.0f};
@@ -60,16 +58,17 @@ void FixedUpdateGame()
 
 void DrawGame()
 {
-    for (size_t i = 0; i < Entities.size(); i++)
+    for (const auto& entity : Entities)
     {
-        if (Entities[i] == PlayerEntity) continue;
+        if (entity.get() == PlayerEntity)
+            continue;
 
-        DrawEntity(Entities[i]);
+        DrawEntity(entity.get());
     }
 
-    for (size_t i = 0; i < Platforms.size(); i++)
+    for (const auto& platform : Platforms)
     {
-        DrawPlatform(Platforms[i]);
+        DrawPlatform(platform.get());
     }
 
     DrawPlayer();
@@ -77,14 +76,14 @@ void DrawGame()
 
 void DrawDebug()
 {
-    for (size_t i = 0; i < Entities.size(); i++)
+    for (const auto& entity : Entities)
     {
-        DrawEntityBorder(Entities[i]);
+        DrawEntityBorder(entity.get());
     }
 
-    for (size_t i = 0; i < Platforms.size(); i++)
+    for (const auto& platform : Platforms)
     {
-        DrawPlatformBorders(Platforms[i]);
+        DrawPlatformBorders(platform.get());
     }
 
     DrawPlayerDebug();
@@ -96,48 +95,46 @@ void FinishGame()
     ClearPlatforms();
 
     b2DestroyWorld(MainWorld);
-
-    UnloadGameMaterials();
+    
     UnloadGameTextures();
 }
 
 Entity *CreateEntity()
 {
-    Entity *entity = new Entity();
+    auto entity = std::make_unique<Entity>();
 
-    if (AddEntity(entity))
+    b2BodyDef bodyDef = b2DefaultBodyDef();
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.gravityScale = 1.0f;
+
+    b2MotionLocks motionLocks;
+    motionLocks.linearX = false;
+    motionLocks.linearY = false;
+    motionLocks.angularZ = true;
+
+    bodyDef.motionLocks = motionLocks;
+
+    bodyDef.isEnabled = true;
+    bodyDef.isAwake = true;
+
+    entity->body = b2CreateBody(MainWorld, &bodyDef);
+
+    b2Polygon entityBox = b2MakeBox(entity->size.x / 2.0f, entity->size.y / 2.0f);
+    b2ShapeDef shapeDef = b2DefaultShapeDef();
+    shapeDef.material.friction = 0.0f;
+    b2CreatePolygonShape(entity->body, &shapeDef, &entityBox);
+
+    Entity* entityPointer = entity.get();
+    if (!AddEntity(std::move(entity)))
     {
-
-        b2BodyDef bodyDef = b2DefaultBodyDef();
-        bodyDef.type = b2_dynamicBody;
-        bodyDef.gravityScale = 1.0f;
-
-        b2MotionLocks motionLocks;
-        motionLocks.linearX = false;
-        motionLocks.linearY = false;
-        motionLocks.angularZ = true;
-
-        bodyDef.motionLocks = motionLocks;
-
-        bodyDef.isEnabled = true;
-        bodyDef.isAwake = true;
-
-        entity->body = b2CreateBody(MainWorld, &bodyDef);
-
-        b2Polygon entityBox = b2MakeBox(entity->size.x / 2.0f, entity->size.y / 2.0f);
-        b2ShapeDef shapeDef = b2DefaultShapeDef();
-        shapeDef.material.friction = 0.0f;
-        b2CreatePolygonShape(entity->body, &shapeDef, &entityBox);
-
-        return entity;
+        b2DestroyBody(entityPointer->body);
+        return nullptr;
     }
 
-    delete entity;
-
-    return nullptr;
+    return entityPointer;
 }
 
-bool AddEntity(Entity *entity)
+bool AddEntity(std::unique_ptr<Entity> entity)
 {
     if (Entities.size() >= MAX_ENTITIES)
     {
@@ -145,7 +142,7 @@ bool AddEntity(Entity *entity)
         return false;
     }
 
-    Entities.push_back(entity);
+    Entities.push_back(std::move(entity));
 
     return true;
 }
@@ -157,13 +154,13 @@ void RemoveEntity(Entity *entity)
 
     for (size_t i = 0; i < Entities.size(); ++i)
     {
-        if (Entities[i] != entity)
+        if (Entities[i].get() != entity)
             continue;
 
         b2DestroyBody(entity->body);
 
-        delete Entities[i];
-        Entities[i] = Entities.back();
+        if (i != Entities.size() - 1)
+            Entities[i] = std::move(Entities.back());
         Entities.pop_back();
 
         break;
@@ -172,10 +169,9 @@ void RemoveEntity(Entity *entity)
 
 void ClearEntities()
 {
-    for (int i = 0; i < Entities.size(); ++i)
+    for (const auto& entity : Entities)
     {
-        b2DestroyBody(Entities[i]->body);
-        delete Entities[i];
+        b2DestroyBody(entity->body);
     }
 
     Entities.clear();
@@ -183,78 +179,51 @@ void ClearEntities()
 
 Platform *CreatePlatform()
 {
-    Platform *platform = new Platform();
+    auto platform = std::make_unique<Platform>();
 
-    if (AddPlatform(platform))
+    b2BodyDef bodyDef = b2DefaultBodyDef();
+
+    platform->body = b2CreateBody(MainWorld, &bodyDef);
+
+    b2Polygon groundBox = b2MakeBox(0.5f, 0.5f);
+    b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+    groundShapeDef.material.friction = 0.0f;
+    b2CreatePolygonShape(platform->body, &groundShapeDef, &groundBox);
+
+    Platform* platformPointer = platform.get();
+    if (!AddPlatform(std::move(platform)))
     {
-
-        b2BodyDef bodyDef = b2DefaultBodyDef();
-
-        platform->body = b2CreateBody(MainWorld, &bodyDef);
-
-        b2Polygon groundBox = b2MakeBox(0.5f, 0.5f);
-        b2ShapeDef groundShapeDef = b2DefaultShapeDef();
-        groundShapeDef.material.friction = 0.0f;
-        b2CreatePolygonShape(platform->body, &groundShapeDef, &groundBox);
-
-        return platform;
+        b2DestroyBody(platformPointer->body);
+        return nullptr;
     }
 
-    delete platform;
-
-    return nullptr;
+    return platformPointer;
 }
 
 Platform *CreatePlatform(b2Vec2 size, b2Vec2 position)
 {
-    Platform *platform = new Platform(size);
+    auto platform = std::make_unique<Platform>(size);
 
-    if (AddPlatform(platform))
+    b2BodyDef bodyDef = b2DefaultBodyDef();
+    bodyDef.position = {position.x, position.y};
+
+    platform->body = b2CreateBody(MainWorld, &bodyDef);
+
+    b2Polygon groundBox = b2MakeBox(size.x / 2.0f, size.y / 2.0f);
+    b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+    b2CreatePolygonShape(platform->body, &groundShapeDef, &groundBox);
+
+    Platform* platformPointer = platform.get();
+    if (!AddPlatform(std::move(platform)))
     {
-
-        b2BodyDef bodyDef = b2DefaultBodyDef();
-        bodyDef.position = {position.x, position.y};
-
-        platform->body = b2CreateBody(MainWorld, &bodyDef);
-
-        b2Polygon groundBox = b2MakeBox(size.x / 2.0f, size.y / 2.0f);
-        b2ShapeDef groundShapeDef = b2DefaultShapeDef();
-        b2CreatePolygonShape(platform->body, &groundShapeDef, &groundBox);
-
-        return platform;
+        b2DestroyBody(platformPointer->body);
+        return nullptr;
     }
 
-    delete platform;
-
-    return nullptr;
+    return platformPointer;
 }
 
-/*Platform *CreatePlatform(b2Vec2 size, b2Vec2 position, float angle)
-{
-    Platform *platform = new Platform(size);
-
-    if (AddPlatform(platform))
-    {
-
-        b2BodyDef bodyDef = b2DefaultBodyDef();
-        bodyDef.position = {position.x, position.y};
-        bodyDef.rotation = b2MakeRot(DEG2RAD * angle);
-
-        platform->body = b2CreateBody(MainWorld, &bodyDef);
-
-        b2Polygon groundBox = b2MakeBox(size.x / 2.0f, size.y / 2.0f);
-        b2ShapeDef groundShapeDef = b2DefaultShapeDef();
-        b2CreatePolygonShape(platform->body, &groundShapeDef, &groundBox);
-
-        return platform;
-    }
-
-    delete platform;
-
-    return nullptr;
-}*/
-
-bool AddPlatform(Platform *platform)
+bool AddPlatform(std::unique_ptr<Platform> platform)
 {
     if (Platforms.size() >= MAX_PLATFORMS)
     {
@@ -262,7 +231,7 @@ bool AddPlatform(Platform *platform)
         return false;
     }
 
-    Platforms.push_back(platform);
+    Platforms.push_back(std::move(platform));
 
     return true;
 }
@@ -271,13 +240,13 @@ void RemovePlatform(Platform *platform)
 {
     for (size_t i = 0; i < Platforms.size(); ++i)
     {
-        if (Platforms[i] != platform)
+        if (Platforms[i].get() != platform)
             continue;
 
         b2DestroyBody(platform->body);
 
-        delete Platforms[i];
-        Platforms[i] = Platforms.back();
+        if (i != Platforms.size() - 1)
+            Platforms[i] = std::move(Platforms.back());
         Platforms.pop_back();
 
         return;
@@ -286,10 +255,9 @@ void RemovePlatform(Platform *platform)
 
 void ClearPlatforms()
 {
-    for (size_t i = 0; i < Platforms.size(); ++i)
+    for (const auto& platform : Platforms)
     {
-        b2DestroyBody(Platforms[i]->body);
-        delete Platforms[i];
+        b2DestroyBody(platform->body);
     }
 
     Platforms.clear();

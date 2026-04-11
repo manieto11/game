@@ -12,7 +12,7 @@ int main()
     if (!steamEnabled)
         TraceLog(LOG_WARNING, "Steam API not enabled!");
 
-    float fixedUpdate = 0.0f;
+    float fixedUpdateAccumulator = 0.0f;
 #if DEBUG == 0
     Shader pixelShader = LoadShaderFromMemory(baseVertexShader, pixelizerFragmentShader);
     RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
@@ -41,12 +41,12 @@ int main()
         if (steamEnabled)
             SteamAPI_RunCallbacks();
 
-        fixedUpdate += GetFrameTime();
+        fixedUpdateAccumulator += GetFrameTime();
 
-        while (fixedUpdate >= FIXED_DELTA_TIME)
+        while (fixedUpdateAccumulator >= FIXED_DELTA_TIME)
         {
             FixedUpdateGame();
-            fixedUpdate -= FIXED_DELTA_TIME;
+            fixedUpdateAccumulator -= FIXED_DELTA_TIME;
         }
 
         UpdateGame();
