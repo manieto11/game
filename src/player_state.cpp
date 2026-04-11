@@ -10,6 +10,7 @@ float bodyRotation = 0.0f;
 float leftLegRotation = 0.0f;
 float rightLegRotation = 0.0f;
 
+bool lookingRight = false;
 bool doubleJump = false;
 bool unlockedDoubleJump = false;
 bool grounded = false;

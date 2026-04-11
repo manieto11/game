@@ -2,8 +2,8 @@
 
 void DrawPlayer()
 {
-    const Rectangle bodySource = {0.0f, 0.0f, 32.0f, 32.0f};
-    const Rectangle legSource = {32.0f, 0.0f, 32.0f, 32.0f};
+    const Rectangle bodySource = {lookingRight ? 0.0f : 32.0f, 0.0f, 32.0f, 32.0f};
+    const Rectangle legSource = {64.0f, 0.0f, 32.0f, 32.0f};
 
     const Rectangle bodyDest = {bodyPos.x * PIXELS_PER_UNIT, -bodyPos.y * PIXELS_PER_UNIT, PlayerEntity->size.x * PIXELS_PER_UNIT, PlayerEntity->size.y * PIXELS_PER_UNIT};
     const Rectangle leftLegDest = {leftLegPos.x * PIXELS_PER_UNIT, -leftLegPos.y * PIXELS_PER_UNIT, PlayerEntity->size.x * PIXELS_PER_UNIT, PlayerEntity->size.y * PIXELS_PER_UNIT};

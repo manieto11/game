@@ -18,6 +18,7 @@ extern float bodyRotation;
 extern float leftLegRotation;
 extern float rightLegRotation;
 
+extern bool lookingRight;
 extern bool doubleJump;
 extern bool unlockedDoubleJump;
 extern bool grounded;

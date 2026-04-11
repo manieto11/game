@@ -151,6 +151,9 @@ void UpdatePlayer(const std::vector<std::unique_ptr<Platform>>& platforms)
 
     inputX = Clamp(inputX, -1.0f, 1.0f);
 
+    if ((inputX > 0.0f && lookingRight) || (inputX < 0.0f && !lookingRight))
+        lookingRight = !lookingRight;
+
     const float playerSpeed = GetPlayerSpeed();
 
     const bool jumpPressed = IsKeyDown(KEY_SPACE) || (gamepadAvailable && IsGamepadButtonDown(PLAYER_GAMEPAD, GAMEPAD_BUTTON_RIGHT_FACE_DOWN));
