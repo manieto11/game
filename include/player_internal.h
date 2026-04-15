@@ -36,7 +36,6 @@ inline constexpr b2Vec2 kFloorUp = {0.0f, 1.0f};
 inline constexpr b2Vec2 kWallUpLeft = {1.0f, 0.0f};
 inline constexpr b2Vec2 kWallUpRight = {-1.0f, 0.0f};
 
-Rectangle PlatformRect(const Platform* platform);
 Rectangle GroundProbeRect(const b2Vec2& position);
 Rectangle WallProbeRect(const b2Vec2& position, bool rightSide);
 

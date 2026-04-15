@@ -1,4 +1,5 @@
 #include "player_internal.h"
+#include "game.h"
 
 #include <cmath>
 
@@ -6,6 +7,44 @@ namespace
 {
     constexpr float kInputDeadzone = 0.1f;
     constexpr float kStrideSegment = 0.25f;
+
+    bool CheckRectCollisionAgainstGroundGrid(const Rectangle& probeRect)
+    {
+        for (auto& grid : Grids)
+        {
+            if (grid == nullptr || !grid->hasCollision)
+                continue;
+
+            const float cellWidth = grid->cellSize.x;
+            const float cellHeight = grid->cellSize.y;
+
+            int minX = static_cast<int>(floorf(probeRect.x / cellWidth));
+            int maxX = static_cast<int>(floorf((probeRect.x + probeRect.width) / cellWidth));
+            int minY = static_cast<int>(floorf(probeRect.y / cellHeight));
+            int maxY = static_cast<int>(floorf((probeRect.y + probeRect.height) / cellHeight));
+
+            minX = Clamp(minX, 0, grid->gridWidth - 1);
+            maxX = Clamp(maxX, 0, grid->gridWidth - 1);
+            minY = Clamp(minY, 0, grid->gridHeight - 1);
+            maxY = Clamp(maxY, 0, grid->gridHeight - 1);
+
+            for (int y = minY; y <= maxY; ++y)
+            {
+                for (int x = minX; x <= maxX; ++x)
+                {
+                    const GridCell* cell = grid->GetCell(x, y);
+                    if (cell == nullptr || !cell->isActive)
+                        continue;
+
+                    const Rectangle cellRect = {x * cellWidth, y * cellHeight, cellWidth, cellHeight};
+                    if (CheckCollisionRecs(cellRect, probeRect))
+                        return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     float LegStrideY(float cycle, bool invert)
     {
@@ -43,44 +82,31 @@ void UpdatePlayerAnimation()
     rightLegPos = {bodyPos.x + 0.6f, bodyPos.y - 0.5f + legYOffset * LegStrideY(step, true)};
 }
 
-bool WallClimb(const std::vector<std::unique_ptr<Platform>>& platforms)
+bool WallClimb()
 {
     const Rectangle leftRect = WallProbeRect(playerPosition, false);
     const Rectangle rightRect = WallProbeRect(playerPosition, true);
 
-    for (const auto& platform : platforms)
+    if (CheckRectCollisionAgainstGroundGrid(leftRect))
     {
-        const Rectangle platformRect = PlatformRect(platform.get());
+        bodyUp = kWallUpLeft;
+        return true;
+    }
 
-        if (CheckCollisionRecs(platformRect, leftRect))
-        {
-            bodyUp = kWallUpLeft;
-            return true;
-        }
-        else if (CheckCollisionRecs(platformRect, rightRect))
-        {
-            bodyUp = kWallUpRight;
-            return true;
-        }
+    if (CheckRectCollisionAgainstGroundGrid(rightRect))
+    {
+        bodyUp = kWallUpRight;
+        return true;
     }
 
     bodyUp = kFloorUp;
     return false;
 }
 
-bool IsGrounded(const std::vector<std::unique_ptr<Platform>>& platforms)
+bool IsGrounded()
 {
     const Rectangle groundedRect = GroundProbeRect(playerPosition);
-
-    for (const auto& platform : platforms)
-    {
-        const Rectangle platformRect = PlatformRect(platform.get());
-
-        if (CheckCollisionRecs(platformRect, groundedRect))
-            return true;
-    }
-
-    return false;
+    return CheckRectCollisionAgainstGroundGrid(groundedRect);
 }
 
 void Jump()
@@ -92,7 +118,7 @@ void Jump()
     playerVelocity += jumpingVelocity * bodyUp;
 }
 
-void UpdatePlayer(const std::vector<std::unique_ptr<Platform>>& platforms)
+void UpdatePlayer()
 {
     if (PlayerEntity == nullptr || !b2Body_IsValid(PlayerEntity->body))
         return;
@@ -103,10 +129,10 @@ void UpdatePlayer(const std::vector<std::unique_ptr<Platform>>& platforms)
     const float currentTime = GetTime();
     const bool gamepadAvailable = IsGamepadAvailable(PLAYER_GAMEPAD);
 
-    grounded = IsGrounded(platforms);
+    grounded = IsGrounded();
 
     if (unlockedWallClimbing)
-        wallClimbing = WallClimb(platforms);
+        wallClimbing = WallClimb();
     else if (wallClimbing)
         wallClimbing = false;
 

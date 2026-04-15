@@ -5,7 +5,7 @@ Texture2D DefaultTexture, BackgroundTexture, IronBeamTexture, PlayerTexture;
 
 void LoadGameTextures()
 {
-    Image image = GenImageChecked(PIXELS_PER_UNIT, PIXELS_PER_UNIT, PIXELS_PER_UNIT / 2, PIXELS_PER_UNIT / 2, MAGENTA, BLACK);
+    Image image = GenImageChecked(2, 2, 1, 1, MAGENTA, BLACK);
     if (!IsImageValid(image))
         TraceLog(LOG_WARNING, "Image not valid!");
     DefaultTexture = LoadTextureFromImage(image);

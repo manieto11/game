@@ -18,12 +18,16 @@ int main()
         if (IsKeyPressed(KEY_F11))
         {
             ToggleBorderlessWindowed();
+            fullscreen = !fullscreen;
         }
 
         if (IsWindowResized())
         {
-            screenWidth = GetScreenWidth();
-            screenHeight = GetScreenHeight();
+            MainCamera.offset = {
+                static_cast<float>(GetScreenWidth()) * 0.5f,
+                static_cast<float>(GetScreenHeight()) * 0.5f,
+            };
+            MainCamera.zoom = static_cast<float>(GetScreenWidth()) / static_cast<float>(screenWidth);
         }
 
         if (steamEnabled)
@@ -42,16 +46,16 @@ int main()
         BeginDrawing();
         ClearBackground(SKYBLUE);
 
-        BeginMode3D(MainCamera);
+        BeginMode2D(MainCamera);
+        DrawGame();
 #if DEBUG
         DrawDebug();
 #endif
-        DrawGame();
-        EndMode3D();
+        EndMode2D();
 
 #if DEBUG
-        DrawLine(0, screenHeight / 2, screenWidth, screenHeight / 2, LIME);
-        DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, LIME);
+        DrawLine(0, GetScreenHeight() / 2, GetScreenWidth(), GetScreenHeight() / 2, LIME);
+        DrawLine(GetScreenWidth() / 2, 0, GetScreenWidth() / 2, GetScreenHeight(), LIME);
         DrawFPS(10, 10);
 #endif
         
@@ -59,8 +63,6 @@ int main()
     }
 
     FinishGame();
-
-    SaveSettings();
 
     SteamAPI_Shutdown();
 

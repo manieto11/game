@@ -5,16 +5,19 @@
 #include <vector>
 #include "box2d/box2d.h"
 #include "entity.h"
-#include "platform.h"
+#include "grid.h"
 #include "raylib.h"
 
 #define MAX_ENTITIES 128
-#define MAX_PLATFORMS 128
 
-extern Camera MainCamera;
+extern Camera2D MainCamera;
 extern b2WorldId MainWorld;
 extern std::vector<std::unique_ptr<Entity>> Entities;
-extern std::vector<std::unique_ptr<Platform>> Platforms;
+extern std::vector<std::unique_ptr<Grid>> Grids;
+
+// Define camera dead zone width (player can move this far left/right before camera moves)
+// Height is auto-calculated based on screen aspect ratio
+#define CAMERA_DEADZONE_WIDTH 3.0f
 
 // Initialize variable required for game
 void InitGame();
@@ -29,8 +32,13 @@ void DrawDebug();
 // Clear memory no longer needed for game
 void FinishGame();
 
+// Update camera to follow player with deadzone
+void UpdateCameraFollowPlayer();
+
 // Create new entity. Use RemoveEntity or ClearEntities for memory clearance
 Entity *CreateEntity();
+// Create new entity. Use RemoveEntity or ClearEntities for memory clearance
+Entity *CreateEntity(float x, float y);
 
 // Add entity for drawing
 bool AddEntity(std::unique_ptr<Entity> entity);
@@ -39,16 +47,13 @@ void RemoveEntity(Entity* entity);
 // Remove all the entities
 void ClearEntities();
 
-// Create new platform. Use RemovePlatform or ClearPlatforms for memory clearance
-Platform *CreatePlatform();
-// Create new platform. Use RemovePlatform or ClearPlatforms for memory clearance
-Platform *CreatePlatform(b2Vec2 size, b2Vec2 position);
-
-// Add platform for drawing (if debugging)
-bool AddPlatform(std::unique_ptr<Platform> platform);
-//Remove platform for drawing
-void RemovePlatform(Platform* platform);
-// Removes all the platform
-void ClearPlatforms();
+// Create new grid
+Grid* CreateGrid(b2Vec2 cellSize, int gridWidth, int gridHeight, bool hasCollision);
+// Add grid for drawing and physics
+bool AddGrid(std::unique_ptr<Grid> grid);
+// Remove grid
+void RemoveGrid(Grid* grid);
+// Clear all grids
+void ClearGrids();
 
 #endif

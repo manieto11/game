@@ -11,7 +11,7 @@
 // Time in seconds between physics' updates
 #define FIXED_DELTA_TIME 0.02f
 // Number of pixels considered a unit for drawing textures
-#define PIXELS_PER_UNIT 128
+#define PIXELS_PER_UNIT 32
 // The objects' gravity force
 #define GAME_GRAVITY 8.0f
 // The default gamepad of the player

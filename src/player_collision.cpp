@@ -19,13 +19,6 @@ namespace
     }
 }
 
-Rectangle PlatformRect(const Platform* platform)
-{
-    const b2Vec2 platformPosition = b2Body_GetPosition(platform->body);
-    const b2Vec2 offset = 0.5f * platform->size;
-    return {platformPosition.x - offset.x, platformPosition.y - offset.y, platform->size.x, platform->size.y};
-}
-
 Rectangle GroundProbeRect(const b2Vec2& position)
 {
     return SurfaceProbeRect(position, kFloorUp);
