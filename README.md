@@ -51,6 +51,12 @@ Salvage parts from defeated robots to unlock new abilities.
 
 *TODO*
 
+## Known issues:
+
+- Grid renders glitchy.
+- If spamming A or D  key, player randomly changes looking direction.
+- Wall-climbing algorithms suck.
+
 ## Story: 
 You find a buried AI core containing a child's voice - the last human child who uploaded their consciousness before humanity fell. They guide you to restore power to underground bunkers where humans survive in cryo-sleep.
 
