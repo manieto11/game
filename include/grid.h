@@ -10,11 +10,12 @@
 // A single grid cell
 struct GridCell
 {
-    Texture2D* texture; // Optional texture
-    Rectangle textureSource;
-    bool isActive;      // Whether this cell exists
+    uint8_t textureID;
 
     GridCell();
+    GridCell(int id);
+
+    Rectangle GetTextureSource() const;
 };
 
 // A merged collision rectangle containing multiple cells
@@ -35,7 +36,7 @@ public:
     ~Grid();
 
     // Add or update a cell at grid position
-    void SetCell(int x, int y, bool active, Texture2D* texture = nullptr);
+    void SetCell(int x, int y, int id);
     
     // Get cell at grid position
     GridCell* GetCell(int x, int y);
@@ -52,6 +53,9 @@ public:
     // Rebuild collision rectangles from active cells
     void RebuildColliders();
 
+    // Set grid texture
+    void SetTexture(Texture2D *texture);
+
     // Render the grid
     void Draw() const;
     
@@ -67,6 +71,7 @@ public:
 private:
     std::map<std::pair<int, int>, GridCell> cells;
     std::vector<ColliderRect> colliders;  // Merged collision rectangles
+    Texture2D* texture;
     
     // Algorithm to merge adjacent cells into rectangles
     void MergeColliders();

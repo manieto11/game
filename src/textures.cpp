@@ -1,7 +1,7 @@
 #include "textures.h"
 #include "settings.h"
 
-Texture2D DefaultTexture, BackgroundTexture, IronBeamTexture, PlayerTexture;
+Texture2D DefaultTexture, BackgroundTexture, GroundAtlasTexture, IronBeamTexture, PlayerTexture;
 
 void LoadGameTextures()
 {
@@ -12,6 +12,7 @@ void LoadGameTextures()
     UnloadImage(image);
 
     BackgroundTexture = LoadTexture("../../textures/background.png");
+    GroundAtlasTexture = LoadTexture("../../textures/ground_atlas.png");
     IronBeamTexture = LoadTexture("../../textures/iron_beam.png");
     PlayerTexture = LoadTexture("../../textures/main_character.png");
 }
@@ -21,6 +22,7 @@ void UnloadGameTextures()
     UnloadTexture(DefaultTexture);
 
     UnloadTexture(BackgroundTexture);
+    UnloadTexture(GroundAtlasTexture);
     UnloadTexture(IronBeamTexture);
     UnloadTexture(PlayerTexture);
 }

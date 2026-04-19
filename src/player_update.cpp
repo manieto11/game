@@ -33,7 +33,7 @@ namespace
                 for (int x = minX; x <= maxX; ++x)
                 {
                     const GridCell* cell = grid->GetCell(x, y);
-                    if (cell == nullptr || !cell->isActive)
+                    if (cell == nullptr || cell->textureID == 255)
                         continue;
 
                     const Rectangle cellRect = {x * cellWidth, y * cellHeight, cellWidth, cellHeight};

@@ -8,6 +8,7 @@
 extern Texture2D DefaultTexture;
 
 extern Texture2D BackgroundTexture;
+extern Texture2D GroundAtlasTexture;
 extern Texture2D IronBeamTexture;
 extern Texture2D PlayerTexture;
 

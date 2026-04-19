@@ -3,12 +3,22 @@
 #include "settings.h"
 #include <algorithm>
 #include <set>
+#include <cmath>
 
 std::vector<std::unique_ptr<Grid>> Grids;
 
-GridCell::GridCell() : texture(nullptr), isActive(false)
+GridCell::GridCell() : textureID(255)
 {
-    textureSource = {0.0f, 0.0f, 0.0f, 0.0f};
+    
+}
+
+GridCell::GridCell(int id) : textureID(id)
+{
+}
+
+Rectangle GridCell::GetTextureSource() const
+{
+    return {static_cast<float>(PIXELS_PER_UNIT * (textureID % 16)), static_cast<float>(PIXELS_PER_UNIT * (textureID / 16)), static_cast<float>(PIXELS_PER_UNIT), static_cast<float>(PIXELS_PER_UNIT)};
 }
 
 Grid::Grid(b2Vec2 cellSize, int gridWidth, int gridHeight, bool hasCollision)
@@ -21,7 +31,7 @@ Grid::~Grid()
     Clear();
 }
 
-void Grid::SetCell(int x, int y, bool active, Texture2D* texture)
+void Grid::SetCell(int x, int y, int id)
 {
     // Validate grid bounds
     if (x < 0 || x >= gridWidth || y < 0 || y >= gridHeight)
@@ -30,24 +40,25 @@ void Grid::SetCell(int x, int y, bool active, Texture2D* texture)
     auto key = std::make_pair(x, y);
     auto it = cells.find(key);
 
-    if (!active)
+    if (id == 255)
     {
         // Remove cell if it exists
         if (it != cells.end())
         {
             cells.erase(it);
+            
+            // Rebuild colliders after removal
+            if (hasCollision)
+            {
+                RebuildColliders();
+            }
         }
-        // Rebuild colliders after removal
-        if (hasCollision)
-        {
-            RebuildColliders();
-        }
+        
         return;
     }
 
     GridCell newCell;
-    newCell.isActive = true;
-    newCell.texture = texture;
+    newCell.textureID = id;
 
     // Replace or insert
     if (it != cells.end())
@@ -69,7 +80,7 @@ void Grid::SetCell(int x, int y, bool active, Texture2D* texture)
 GridCell* Grid::GetCell(int x, int y)
 {
     auto it = cells.find(std::make_pair(x, y));
-    if (it == cells.end() || !it->second.isActive)
+    if (it == cells.end() || it->second.textureID == 255)
         return nullptr;
     return &it->second;
 }
@@ -112,6 +123,11 @@ void Grid::RebuildColliders()
     MergeColliders();
 }
 
+void Grid::SetTexture(Texture2D *texture)
+{
+    this->texture = texture;
+}
+
 void Grid::MergeColliders()
 {
     // Track which cells have been covered
@@ -125,7 +141,7 @@ void Grid::MergeColliders()
             auto key = std::make_pair(x, y);
 
             // Skip if already covered or not active
-            if (covered.count(key) || cells.find(key) == cells.end() || !cells[key].isActive)
+            if (covered.count(key) || cells.find(key) == cells.end() || cells[key].textureID == 255)
                 continue;
 
             // Start a new rectangle from this cell
@@ -138,7 +154,7 @@ void Grid::MergeColliders()
             while (rectX + rectWidth < gridWidth)
             {
                 auto checkKey = std::make_pair(rectX + rectWidth, rectY);
-                if (cells.find(checkKey) == cells.end() || !cells[checkKey].isActive || covered.count(checkKey))
+                if (cells.find(checkKey) == cells.end() || cells[checkKey].textureID == 255 || covered.count(checkKey))
                     break;
                 rectWidth++;
             }
@@ -150,7 +166,7 @@ void Grid::MergeColliders()
                 for (int cx = rectX; cx < rectX + rectWidth; ++cx)
                 {
                     auto checkKey = std::make_pair(cx, rectY + rectHeight);
-                    if (cells.find(checkKey) == cells.end() || !cells[checkKey].isActive || covered.count(checkKey))
+                    if (cells.find(checkKey) == cells.end() || cells[checkKey].textureID == 255 || covered.count(checkKey))
                     {
                         canExpand = false;
                         break;
@@ -206,16 +222,16 @@ void Grid::Draw() const
 {
     for (const auto& pair : cells)
     {
-        if (!pair.second.isActive)
+        if (pair.second.textureID == 255)
             continue;
 
         int gridX = pair.first.first;
         int gridY = pair.first.second;
         const GridCell& cell = pair.second;
 
-        b2Vec2 worldPos = GetWorldPosition(gridX, gridY);
-        Vector2 screenPos = {worldPos.x * PIXELS_PER_UNIT, -worldPos.y * PIXELS_PER_UNIT};
+        Vector2 screenPos = {(gridX + 0.5f) * PIXELS_PER_UNIT, -(gridY + 0.5f) * PIXELS_PER_UNIT};
 
+        // Round to integer pixel coordinates to avoid sub-pixel rendering artifacts
         Rectangle destRect = {
             screenPos.x - (cellSize.x * PIXELS_PER_UNIT) / 2.0f,
             screenPos.y - (cellSize.y * PIXELS_PER_UNIT) / 2.0f,
@@ -223,9 +239,9 @@ void Grid::Draw() const
             cellSize.y * PIXELS_PER_UNIT
         };
 
-        if (cell.texture != nullptr)
+        if (texture != nullptr)
         {
-            DrawTexturePro(*cell.texture, cell.textureSource, destRect, {0, 0}, 0.0f, WHITE);
+            DrawTexturePro(*texture, cell.GetTextureSource(), destRect, {0, 0}, 0.0f, WHITE);
         }
         else
         {
@@ -262,7 +278,7 @@ void Grid::DrawDebug() const
         // Draw individual prop cells
         for (const auto& pair : cells)
         {
-            if (!pair.second.isActive)
+            if (pair.second.textureID == 255)
                 continue;
 
             int gridX = pair.first.first;

@@ -42,16 +42,31 @@ void InitGame()
 
     // Create ground collision grid (1x1 cells, 20 wide, 10 tall)
     Grid* groundGrid = CreateGrid({1.0f, 1.0f}, 20, 10, true);
+
+    groundGrid->SetTexture(&GroundAtlasTexture);
     
     // Populate ground level with collision tiles (y = 0)
-    for (int x = 0; x < 20; ++x)
+    for (int x = 1; x < 19; ++x)
     {
-        groundGrid->SetCell(x, 0, true);
+        groundGrid->SetCell(x, 0, 7);
+        groundGrid->SetCell(x, 9, 1);
     }
-    
-    // Create prop grid (no collision)
-    Grid* propGrid = CreateGrid({1.0f, 1.0f}, 20, 10, false);
-    
+
+    groundGrid->SetCell(0, 0, 8);
+    groundGrid->SetCell(19, 0, 8);
+
+    for (int y = 1; y < 9; ++y)
+    {
+        groundGrid->SetCell(0, y, 4);
+        groundGrid->SetCell(19, y, 4);
+    }
+
+    groundGrid->SetCell(0, 9, 0);
+    groundGrid->SetCell(19, 9, 3);
+
+    /*// Create prop grid (no collision)
+    Grid *propGrid = CreateGrid({1.0f, 1.0f}, 20, 10, false);
+
     // Add some example prop tiles
     for (int x = 2; x < 5; ++x)
     {
@@ -60,8 +75,7 @@ void InitGame()
     for (int x = 10; x < 13; ++x)
     {
         propGrid->SetCell(x, 4, true);
-    }
-
+    }*/
 }
 
 void UpdateGame()
